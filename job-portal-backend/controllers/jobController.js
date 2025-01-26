@@ -1,7 +1,7 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import { Job } from "../models/jobSchema.js";
 import ErrorHandler from "../middlewares/error.js";
-import { sriLankaProvinces, workTypes, jobCategories } from "../utils/commonVariables.js";
+import { sriLankaProvinces, workTypes, jobCategories, jobExperience } from "../utils/commonVariables.js";
 import validator from "validator";
 
 // Get All Jobs
@@ -45,8 +45,8 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     education,
     noOfPositions,
     isCVRequired,
-    cvLink,
     duration,
+    questions,
   } = req.body;
 
   // Validate required fields
@@ -62,7 +62,8 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     !workType ||
     !applyDeadline ||
     !noOfPositions ||
-    !duration
+    !duration ||
+    !experience
   ) {
     return next(new ErrorHandler("Please provide all required job details.", 400));
   }
@@ -120,18 +121,9 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  // Validate CV link if CV is required
-  if (isCVRequired && (!cvLink || !cvLink.startsWith("http"))) {
-    return next(
-      new ErrorHandler(
-        "CV link is required and must be a valid URL if 'isCVRequired' is true.",
-        400
-      )
-    );
-  }
 
   // Validate photos
-  if (photos && photos.some((url) => !url.startsWith("http"))) {
+  if (photos && photos.some((photo) => !photo.url.startsWith("http") || !photo.secure_url.startsWith("https"))) {
     return next(
       new ErrorHandler("All photos must be valid URLs starting with http or https.", 400)
     );
@@ -140,6 +132,11 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
   // Validate workType
   if (!workTypes.includes(workType)) {
     return next(new ErrorHandler("Invalid work type.", 400));
+  }
+
+  // Validate Experience
+  if (!jobExperience.includes(experience)) {
+    return next(new ErrorHandler("Invalid experience.", 400));
   }
 
   // Create the job document
@@ -156,15 +153,15 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     salaryFrom,
     salaryTo,
     photos: photos || [],
-    experience: experience || { days: 0, months: 0, years: 0 },
+    experience,
     workType,
     duration,
     applyDeadline,
     education,
     noOfPositions,
     isCVRequired,
-    cvLink: isCVRequired ? cvLink : null,
     postedBy: req.user._id,
+    questions,
   });
 
   res.status(201).json({
@@ -190,6 +187,15 @@ export const getMyJobs = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+// // Get Questions of posted job 
+// export const getQuestionsOfJob = catchAsyncErrors(async (req, res, next) => {
+//   const {id} = req.params;
+//   const job = await Job.findOne(id);
+//   res.status(200).json({
+//     success: true,
+//     Questions : job.questions,
+//   });
+// });
 
 export const updateJob = catchAsyncErrors(async (req, res, next) => {
   const { role } = req.user;

@@ -37,6 +37,18 @@ export const sriLankaProvinces = [
     }
 ];
 
+export const provinceOnly = [
+  "western",
+  "central",
+  "southern",
+  "northern",
+  "eastern",
+  "north western",
+  "north central",
+  "uva",
+  "sabaragamuwa",
+]
+
 
 export const jobCategories = [
     {
@@ -310,4 +322,16 @@ export const educationLevels = [
   "Higher Education",
 ]
 
+export const gender = ["Male", "Female", "Other"]
+
+export const jobExperience = [
+  "No Experience/Fresher",
+  "1-2 years",
+  "2-4 years",
+  "More than 4 years",
+]
+
+export const profiencyLevels = ["Excellent", "Good", "Fair", "Poor"]
+
+export const jobPostStatus = ["Pending", "Accepted", "Rejected"]
   

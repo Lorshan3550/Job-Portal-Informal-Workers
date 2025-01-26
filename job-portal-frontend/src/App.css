@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 @import "tailwindcss";
 * {
@@ -5,7 +6,7 @@
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", serif;
 }
 ::-webkit-scrollbar {
   display: none;
@@ -1151,7 +1152,7 @@ p {
   }
 }
 nav {
-  background: #18191c;
+  background: #147056;
   padding: 0 20px;
 }
 nav .container {
@@ -1174,6 +1175,7 @@ nav .menu {
   display: flex;
   gap: 25px;
   align-items: center;
+  text-decoration: none;
 }
 nav .menu button {
   height: fit-content;
@@ -1190,7 +1192,7 @@ nav .menu button:hover {
   transition: all 0.3s;
   cursor: pointer;
   font-weight: 500;
-  border: 1px solid #184235;
+  border: 2px solid #184235;
 }
 nav .menu li a {
   color: #f1f3f6;
@@ -1200,7 +1202,8 @@ nav .menu li a {
   position: relative;
 }
 nav .menu li a:hover {
-  color: #2d5649;
+  font-weight: bold;
+  color: #b3b8b6;
   transition: all 0.3s;
 }
 nav .menu li a::before {

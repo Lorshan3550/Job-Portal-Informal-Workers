@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa";
 
 const NotFound = () => {
   return (
@@ -26,9 +27,10 @@ const NotFound = () => {
           <section>
             <Link
               to="/"
-              className="inline-block px-6 py-3 text-2xl  text-white bg-amber-500 rounded-lg shadow-md hover:bg-amber-600  focus:outline-none focus:ring-4 focus:ring-amber-300 transition-transform duration-300"
-            >
+              className="inline-flex items-center px-6 py-3 text-2xl text-green-900 rounded-lg shadow-md hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-800 transition-transform duration-300">
               Back to Home
+              <FaArrowRight className="ml-1 text-lg" />{" "}
+              {/* Right arrow icon with margin */}
             </Link>
           </section>
         </div>

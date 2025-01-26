@@ -14,7 +14,8 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/api/v1/user/logout",
+        "",
+        // http://localhost:4000/api/v1/user/logout
         {
           withCredentials: true,
         }
@@ -28,47 +29,31 @@ const Navbar = () => {
   };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full bg-gray-800 text-white ${
-        isAuthorized ? "navbarShow" : "navbarHide"
-      }`}
-    >
-      <div className="container mx-auto flex items-center justify-between p-4">
+    <nav className={isAuthorized ? "navbarShow" : "navbarHide"}>
+      <div className="container">
         <div className="logo relative">
           <img src="/logo.png" alt="logo" className="h-8" />
           <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white animate-pulse">
             JOBSPHERE
           </span>
         </div>
-        <ul
-          className={`flex space-x-6 md:space-x-8 ${
-            !show ? "hidden md:flex" : "show-menu flex flex-col md:flex-row"
-          }`}
-        >
+        <ul className={!show ? "menu" : "show-menu menu"}>
           <li>
             <Link
               to={"/"}
-              className="hover:text-amber-400"
               onClick={() => setShow(false)}
+              className="no-underline hover:no-underline"
             >
-              Home
+              HOME
             </Link>
           </li>
           <li>
-            <Link
-              to={"/job/getall"}
-              className="hover:text-amber-400"
-              onClick={() => setShow(false)}
-            >
-              All Jobs
+            <Link to={"/job/getall"} onClick={() => setShow(false)}>
+              ALL JOBS
             </Link>
           </li>
           <li>
-            <Link
-              to={"/applications/me"}
-              className="hover:text-amber-400"
-              onClick={() => setShow(false)}
-            >
+            <Link to={"/applications/me"} onClick={() => setShow(false)}>
               {user && user.role === "Employer"
                 ? "APPLICANT'S APPLICATIONS"
                 : "MY APPLICATIONS"}
@@ -77,39 +62,21 @@ const Navbar = () => {
           {user && user.role === "Employer" ? (
             <>
               <li>
-                <Link
-                  to={"/job/post"}
-                  className="hover:text-amber-400"
-                  onClick={() => setShow(false)}
-                >
-                  Post New Jobs
+                <Link to={"/job/post"} onClick={() => setShow(false)}>
+                  POST NEW JOB
                 </Link>
               </li>
               <li>
-                <Link
-                  to={"/job/me"}
-                  className="hover:text-amber-400"
-                  onClick={() => setShow(false)}
-                >
-                  View Your Job
+                <Link to={"/job/me"} onClick={() => setShow(false)}>
+                  VIEW YOUR JOBS
                 </Link>
               </li>
             </>
           ) : null}
-          <li>
-            <button
-              className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 focus:outline-none"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </li>
-        </ul>
 
-        <div
-          className="hamburger md:hidden text-2xl"
-          onClick={() => setShow(!show)}
-        >
+          <button onClick={handleLogout}>LOGOUT</button>
+        </ul>
+        <div className="hamburger" onClick={() => setShow(!show)}>
           {show ? <AiOutlineClose /> : <GiHamburgerMenu />}
         </div>
       </div>
@@ -118,3 +85,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+

@@ -18,7 +18,7 @@ const applicationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
-  }, // Reference to User (Worker)
+  }, // Reference to User (JobSeeker)
   status: {
     type: String,
     enum: jobPostStatus,

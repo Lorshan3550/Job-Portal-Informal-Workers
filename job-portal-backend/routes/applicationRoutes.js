@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  employerGetAllApplications,
+  clientGetAllApplications,
   jobseekerDeleteApplication,
   jobseekerGetAllApplications,
   postApplication,
@@ -11,7 +11,7 @@ const router = express.Router();
 
 
 router.post("/post", isAuthenticated,  postApplication);
-router.get("/employer/getall", isAuthenticated, employerGetAllApplications);
+router.get("/client/getall", isAuthenticated, clientGetAllApplications);
 router.get("/jobseeker/getall", isAuthenticated, jobseekerGetAllApplications);
 router.delete("/delete/:id", isAuthenticated, jobseekerDeleteApplication);
 

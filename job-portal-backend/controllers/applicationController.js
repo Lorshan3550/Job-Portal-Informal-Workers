@@ -2,14 +2,17 @@ import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Application } from "../models/applicationSchema.js";
 import { Job } from "../models/jobSchema.js";
+
 import cloudinary from "cloudinary";
 
+
+// Informal Worker submit the job application
 export const postApplication = catchAsyncErrors(async (req, res, next) => {
   const { role } = req.user;
 
   // Ensure only workers can apply
-  if (role !== "Worker") {
-    return next(new ErrorHandler("Only workers can apply for jobs.", 400));
+  if (role !== "JobSeeker") {
+    return next(new ErrorHandler("Only JobSeeker can apply for jobs.", 400));
   }
 
   const {
@@ -104,34 +107,77 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
 });
 
 
-
-export const employerGetAllApplications = catchAsyncErrors(
+// Get job applications based on the client/Businesses
+export const clientGetAllApplications = catchAsyncErrors(
   async (req, res, next) => {
-    const { role } = req.user;
-    if (role === "Job Seeker") {
+    const { role ,_id: clientId } = req.user;  // renaming _id to clientId
+
+    // Ensure the user is not a JobSeeker
+    if (role === "JobSeeker") {
       return next(
-        new ErrorHandler("Job Seeker not allowed to access this resource.", 400)
+        new ErrorHandler("JobSeeker not allowed to access this resource.", 403)
       );
     }
-    const { _id } = req.user;
-    const applications = await Application.find({ "employerID.user": _id });
+
+    // Find the jobs posted by the client
+    const jobs = await Job.find({postedBy : clientId})
+
+    if(!jobs.length){
+      return res.status(404).json({
+        success: false,
+        message: "No jobs found for this client.",
+      });
+    }
+
+    // Retrieve job IDs from the jobs posted by the client
+    const jobIds = jobs.map((job) => job._id);
+
+    // Find all applications matching the job IDs
+    const applications = await Application.find({ jobId: { $in: jobIds } });
+
+
+    // Categorize applications by jobId
+    const categorizedApplications = jobs.map((job) => {
+      const jobApplications = applications.filter(
+        (application) => application.jobId.toString() === job._id.toString()
+      );
+      return {
+        jobId: job._id,
+        jobTitle: job.title,
+        applications: jobApplications,
+      };
+    });
+
+    // // Find all the applications
+    // const applications = await Application.find();
+
+    // // Filter the applications based on the jobIds of every job
+    // const filteredApplications = applications.filter((application) => {
+    //   return jobs.map((job) => job._id.toString() === application.jobId.toString())
+    // })
+
+    // console.log("applications : ", applications)
+    
+    //const applications = await Application.find({ "workerId": _id });
     res.status(200).json({
       success: true,
-      applications,
+      count : applications.length,
+      categorizedApplications,
     });
   }
 );
 
+// Job Seeker get his/her applied job applications
 export const jobseekerGetAllApplications = catchAsyncErrors(
   async (req, res, next) => {
     const { role } = req.user;
-    if (role === "Employer") {
+    if (role === "JobSeeker") {
       return next(
-        new ErrorHandler("Employer not allowed to access this resource.", 400)
+        new ErrorHandler("JobSeeker not allowed to access this resource.", 400)
       );
     }
     const { _id } = req.user;
-    const applications = await Application.find({ "applicantID.user": _id });
+    const applications = await Application.find({ "workerId": _id });
     res.status(200).json({
       success: true,
       applications,

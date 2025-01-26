@@ -4,7 +4,7 @@ import ErrorHandler from "../middlewares/error.js";
 import { sriLankaProvinces, workTypes, jobCategories, jobExperience } from "../utils/commonVariables.js";
 import validator from "validator";
 
-// Get All Jobs
+// Get All Jobs - 
 export const getAllJobs = catchAsyncErrors(async (req, res, next) => {
   const jobs = await Job.find({ expired: false });
   res.status(200).json({
@@ -174,9 +174,9 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
 // Get posted jobs based logged Client
 export const getMyJobs = catchAsyncErrors(async (req, res, next) => {
   const { role } = req.user;
-  if (role === "Worker") {
+  if (role === "JobSeeker") {
     return next(
-      new ErrorHandler("Worker not allowed to access this resource.", 400)
+      new ErrorHandler("JobSeeker not allowed to access this resource.", 400)
     );
   }
   const myJobs = await Job.find({ postedBy: req.user._id });
@@ -201,9 +201,9 @@ export const updateJob = catchAsyncErrors(async (req, res, next) => {
   const { role } = req.user;
 
   // Ensure workers cannot access this resource
-  if (role === "Worker") {
+  if (role === "JobSeeker") {
     return next(
-      new ErrorHandler("Worker not allowed to access this resource.", 400)
+      new ErrorHandler("JobSeeker not allowed to access this resource.", 400)
     );
   }
   const { id } = req.params;
@@ -264,9 +264,9 @@ export const updateJob = catchAsyncErrors(async (req, res, next) => {
 
 export const deleteJob = catchAsyncErrors(async (req, res, next) => {
   const { role } = req.user;
-  if (role === "Worker") {
+  if (role === "JobSeeker") {
     return next(
-      new ErrorHandler("Worker not allowed to access this resource.", 400)
+      new ErrorHandler("JobSeeker not allowed to access this resource.", 400)
     );
   }
   const { id } = req.params;

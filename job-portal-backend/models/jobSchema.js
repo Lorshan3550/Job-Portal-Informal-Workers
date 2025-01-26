@@ -116,7 +116,6 @@ const jobSchema = new mongoose.Schema({
       },
     },
   ],
-  
   experience: {
     type: String,
     enum: jobExperience,

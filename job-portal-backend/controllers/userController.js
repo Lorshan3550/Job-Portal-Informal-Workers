@@ -10,17 +10,17 @@ import { sriLankaProvinces } from "../utils/commonVariables.js";
 
 // Create User
 export const register = catchAsyncErrors(async (req, res, next) => {
-  const { firstName, middleName, lastName, email, personalSummary, phone, province, district, skills, password, role, location, achievements } = req.body;
+  const { firstName, middleName, lastName, email, personalSummary, phone, province, district, skills, password, role, location, achievements, dateOfBirth, gender } = req.body;
 
   // Validate required fields
-  if (!firstName || !lastName || !email || !phone || !password || !role || !province || !district || !location) {
-    return next(new ErrorHandler("Please fill full form !"));
+  if (!firstName || !lastName || !email || !phone || !password || !role || !province || !district || !location || !dateOfBirth || !gender) {
+    return next(new ErrorHandler("Please fill full form !", 400));
   }
 
   // Check if email is already registered
   const isEmail = await User.findOne({ email });
   if (isEmail) {
-    return next(new ErrorHandler("Email already registered !"));
+    return next(new ErrorHandler("Email already registered !", 400));
   }
 
   // Validate province and district
@@ -47,6 +47,8 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     achievements : role === "Worker" ? achievements || [] : [],
     password,
     role,
+    gender,
+    dateOfBirth,
   });
   sendToken(user, 201, res, "User Registered Sucessfully !");
 });
@@ -77,7 +79,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 
 // Update User Basic Information
 export const update = catchAsyncErrors(async (req, res, next) => {
-  const { firstName, middleName, lastName, phone, province, district, skills, personalSummary, location, achievements } = req.body;
+  const { firstName, middleName, lastName, phone, province, district, skills, personalSummary, location, achievements, gender, dateOfBirth } = req.body;
   // const userId = req.user._id; // Assuming `req.user` is populated via authentication middleware
   const {userId} = req.params;
 
@@ -118,6 +120,8 @@ export const update = catchAsyncErrors(async (req, res, next) => {
   if (achievements && user.role === "Worker") user.achievements = achievements; // Only workers can update skills
 
   if (personalSummary) user.personalSummary = personalSummary;
+  if (gender) user.gender = gender;
+  if (dateOfBirth) user.dateOfBirth = dateOfBirth;
 
   // Save the updated user
   await user.save();
@@ -227,7 +231,7 @@ export const updateEmail = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Delete User Email - Spft Delete
+// Delete User Email - Soft Delete
 export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
   const userId = req.user._id;
 

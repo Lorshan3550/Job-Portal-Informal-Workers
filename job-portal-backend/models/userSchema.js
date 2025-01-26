@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import validator from "validator";
 
-import { sriLankaProvinces } from "../utils/commonVariables.js";
+import { provinceOnly, sriLankaProvinces } from "../utils/commonVariables.js";
 
 const userSchema = new mongoose.Schema({
   userId : { 
@@ -39,10 +39,12 @@ const userSchema = new mongoose.Schema({
   },
   province: { 
     type: String, 
-    enum: [
-      'western', 'central', 'southern', 'northern', 'eastern', 
-      'north western', 'north central', 'uva', 'sabaragamuwa'
-    ], 
+    enum: provinceOnly, 
+    required: true 
+  },
+  gender: { 
+    type: String, 
+    enum: ['Male', 'Female', 'Other'], 
     required: true 
   },
   district: { 
@@ -69,6 +71,16 @@ const userSchema = new mongoose.Schema({
     type: [String], 
     default: [] 
   }, // Only applicable for Workers
+  dateOfBirth: {
+    type: String,
+    required: [true, "Please provide your Date of Birth!"],
+    validate: {
+      validator: function(value) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(value); // Matches yyyy-mm-dd format
+      },
+      message: props => `${props.value} is not a valid date. Use the format yyyy-mm-dd.`,
+    },
+  },
   password: {
     type: String,
     required: [true, "Please provide a Password!"],
@@ -78,7 +90,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     required: [true, "Please select a role"],
-    enum: ["Client", "Worker"],
+    enum: ["Client", "JobSeeker"],
   },
   isDeleted : {
     type : Boolean ,
@@ -88,6 +100,23 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+// Virtual field to calculate age
+userSchema.virtual("age").get(function () {
+  if (!this.dateOfBirth) return null;
+  
+  const today = new Date();
+  const birthDate = new Date(this.dateOfBirth);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+
+  // Adjust age if birth month hasn't occurred yet this year
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age;
 });
 
 

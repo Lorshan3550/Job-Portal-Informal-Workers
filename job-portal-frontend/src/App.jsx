@@ -61,7 +61,7 @@ const App = () => {
         <Route path="/applications/me" element={<MyApplications />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Footer/>
+      {/* <Footer/> */}
       <Toaster/>
     </Router>
     </>

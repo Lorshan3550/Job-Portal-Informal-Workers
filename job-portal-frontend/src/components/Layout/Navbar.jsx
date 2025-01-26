@@ -14,8 +14,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.get(
-        "",
-        // http://localhost:4000/api/v1/user/logout
+        "", // Replace with your logout API endpoint
         {
           withCredentials: true,
         }
@@ -24,36 +23,67 @@ const Navbar = () => {
       setIsAuthorized(false);
       navigateTo("/login");
     } catch (error) {
-      toast.error(error.response.data.message), setIsAuthorized(true);
+      toast.error(error.response.data.message);
+      setIsAuthorized(true);
     }
   };
 
   return (
-    <nav className={isAuthorized ? "navbarShow" : "navbarHide"}>
-      <div className="container">
-        <div className="logo relative">
-          <img src="/logo.png" alt="logo" className="h-8" />
+    <nav
+      className={`${
+        isAuthorized ? "block" : "hidden"
+      } fixed top-0 left-0 w-full bg-green-800 text-white shadow-lg z-50`}
+    >
+      <div className="container mx-auto px-8  flex items-center justify-between">
+        {/* Logo Section */}
+        <div className="logo relative flex">
+          <img src="/logo.png" alt="logo" className="h-18" />
           <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white animate-pulse">
             JOBSPHERE
           </span>
         </div>
-        <ul className={!show ? "menu" : "show-menu menu"}>
+
+        {/* Menu Items */}
+        <ul
+          className={`menu flex flex-col md:flex-row md:items-center md:space-x-8 ${
+            show
+              ? "absolute top-full left-0 bg-green-800 w-full py-4 md:py-0"
+              : "hidden md:flex"
+          }`}
+        >
           <li>
             <Link
-              to={"/"}
+              to="/"
               onClick={() => setShow(false)}
-              className="no-underline hover:no-underline"
+              className="hover:text-gray-200"
             >
               HOME
             </Link>
           </li>
           <li>
-            <Link to={"/job/getall"} onClick={() => setShow(false)}>
+            <Link
+              to="/"
+              onClick={() => setShow(false)}
+              className="hover:text-gray-200"
+            >
+              ABOUT US
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/job/getall"
+              onClick={() => setShow(false)}
+              className="hover:text-gray-200"
+            >
               ALL JOBS
             </Link>
           </li>
           <li>
-            <Link to={"/applications/me"} onClick={() => setShow(false)}>
+            <Link
+              to="/applications/me"
+              onClick={() => setShow(false)}
+              className="hover:text-gray-200"
+            >
               {user && user.role === "Employer"
                 ? "APPLICANT'S APPLICATIONS"
                 : "MY APPLICATIONS"}
@@ -62,21 +92,39 @@ const Navbar = () => {
           {user && user.role === "Employer" ? (
             <>
               <li>
-                <Link to={"/job/post"} onClick={() => setShow(false)}>
+                <Link
+                  to="/job/post"
+                  onClick={() => setShow(false)}
+                  className="hover:text-gray-200"
+                >
                   POST NEW JOB
                 </Link>
               </li>
               <li>
-                <Link to={"/job/me"} onClick={() => setShow(false)}>
+                <Link
+                  to="/job/me"
+                  onClick={() => setShow(false)}
+                  className="hover:text-gray-200"
+                >
                   VIEW YOUR JOBS
                 </Link>
               </li>
             </>
           ) : null}
 
-          <button onClick={handleLogout}>LOGOUT</button>
+          <button
+            onClick={handleLogout}
+            className="mt-4 md:mt-0 bg-green-800 hover:bg-green-900 px-4 py-2 rounded-lg text-sm"
+          >
+            LOGOUT
+          </button>
         </ul>
-        <div className="hamburger" onClick={() => setShow(!show)}>
+
+        {/* Hamburger Icon */}
+        <div
+          className="hamburger text-2xl cursor-pointer md:hidden"
+          onClick={() => setShow(!show)}
+        >
           {show ? <AiOutlineClose /> : <GiHamburgerMenu />}
         </div>
       </div>
@@ -85,5 +133,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-

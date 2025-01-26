@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "./userSchema.js";
-import { sriLankaProvinces, jobCategories, workTypes, educationLevels } from "../utils/commonVariables.js";
+import { sriLankaProvinces, jobCategories, workTypes, educationLevels, jobExperience, provinceOnly } from "../utils/commonVariables.js";
 import ErrorHandler from "../middlewares/error.js";
 import validator from "validator";
 
@@ -56,17 +56,7 @@ const jobSchema = new mongoose.Schema({
   },
   province: {
     type: String,
-    enum: [
-      "western",
-      "central",
-      "southern",
-      "northern",
-      "eastern",
-      "north western",
-      "north central",
-      "uva",
-      "sabaragamuwa",
-    ],
+    enum: provinceOnly,
     required: true,
   },
   district: {
@@ -101,33 +91,36 @@ const jobSchema = new mongoose.Schema({
   salaryTo: {
     type: Number,
   },
-  photos: {
-    type: [String], // Array of URLs
-    default: [] ,
-    required : false,
-    validate: {
-      validator: function (photos) {
-        return photos.every((url) => url.startsWith("http") || url.startsWith("https"));
+  photos: [
+    {
+      public_id: {
+        type: String,
       },
-      message: "Photos must be valid URLs.",
+      url: {
+        type: String,
+        validate: {
+          validator: function (value) {
+            return value.startsWith("http");
+          },
+          message: (props) => `${props.value} is not a valid HTTP URL.`,
+        },
+      },
+      secure_url: {
+        type: String,
+        validate: {
+          validator: function (value) {
+            return value.startsWith("https");
+          },
+          message: (props) => `${props.value} is not a valid HTTPS URL.`,
+        },
+      },
     },
-  },
+  ],
+  
   experience: {
-    days: {
-      type: Number,
-      min: 0,
-      default: 0,
-    },
-    months: {
-      type: Number,
-      min: 0,
-      default: 0,
-    },
-    years: {
-      type: Number,
-      min: 0,
-      default: 0,
-    },
+    type: String,
+    enum: jobExperience,
+    required: [true, "Please select your experience level."],
   },
   workType: {
     type: String,
@@ -151,15 +144,6 @@ const jobSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  cvLink: {
-    type: String,
-    validate: {
-      validator: function (value) {
-        return !this.isCVRequired || (value && value.startsWith("http"));
-      },
-      message: "CV link is required if 'isCVRequired' is true and must be a valid URL.",
-    },
-  },
   expired: {
     type: Boolean,
     default: false,
@@ -182,6 +166,18 @@ const jobSchema = new mongoose.Schema({
     enum: ["Open", "In Progress", "Closed"],
     default: "Open",
   },
+  questions: [
+    {
+      question: {
+        type: String,
+        required: true,
+      },
+      answerType:{
+        type: String,
+        enum : ['Yes/No', 'Number', 'Text']
+      }
+    }
+  ],
 });
 
 // Middleware to validate duration

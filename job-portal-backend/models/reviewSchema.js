@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import ErrorHandler from "../middlewares/error";
+import ErrorHandler from "../middlewares/error.js";
 
 const reviewSchema = new mongoose.Schema({
   reviewId: { 

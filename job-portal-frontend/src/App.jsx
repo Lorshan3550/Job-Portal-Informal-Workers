@@ -25,7 +25,7 @@ const App = () => {
       try {
         const response = await axios.get(
           "",
-          //http://localhost:4000/api/v1/user/getuser
+          
           {
             withCredentials: true,
           }
@@ -61,7 +61,7 @@ const App = () => {
         <Route path="/job/me" element={<MyJobs />} />
         <Route path="/application/:id" element={<Application />} />
         <Route path="/applications/me" element={<MyApplications />} />
-        <Route path="*" element={<NotFound />} />
+        {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       <Footer/>
       <Toaster/>

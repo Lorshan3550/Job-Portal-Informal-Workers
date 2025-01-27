@@ -15,6 +15,7 @@ import PostJob from "./components/Job/PostJob";
 import Application from "./components/Application/Application";
 import MyApplications from "./components/Application/MyApplications";
 import NotFound from "./components/NotFound/NotFound";
+import AboutUs from "./components/About/Aboutus";
 import axios from "axios";
 
 const App = () => {
@@ -24,7 +25,7 @@ const App = () => {
       try {
         const response = await axios.get(
           "",
-          //http://localhost:4000/api/v1/user/getuser
+          
           {
             withCredentials: true,
           }
@@ -55,13 +56,14 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/job/getall" element={<Jobs />} />
         <Route path="/job/:id" element={<JobDetails />} />
+        <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/job/post" element={<PostJob />} />
         <Route path="/job/me" element={<MyJobs />} />
         <Route path="/application/:id" element={<Application />} />
         <Route path="/applications/me" element={<MyApplications />} />
-        <Route path="*" element={<NotFound />} />
+        {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-      {/* <Footer/> */}
+      <Footer/>
       <Toaster/>
     </Router>
     </>

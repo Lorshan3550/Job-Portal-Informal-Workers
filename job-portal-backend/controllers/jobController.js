@@ -34,7 +34,7 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     province,
     district,
     city,
-    location,
+    address,
     fixedSalary,
     salaryFrom,
     salaryTo,
@@ -58,7 +58,7 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     !province ||
     !district ||
     !city ||
-    !location ||
+    !address ||
     !workType ||
     !applyDeadline ||
     !noOfPositions ||
@@ -148,7 +148,7 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     province,
     district,
     city,
-    location,
+    address,
     fixedSalary,
     salaryFrom,
     salaryTo,

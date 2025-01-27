@@ -170,10 +170,10 @@ applicationSchema.pre("validate", async function (next) {
 
   if (job.isCVRequired) {
     // If CV is required, ensure resume fields are provided
-    if (!this.resume || !this.resume.public_id || !this.resume.url || this.resume.secure_url) {
+    if (!this.resume || !this.resume.public_id || !this.resume.url || !this.resume.secure_url) {
       return next(
         new ErrorHandler(
-          "Resume is required for this job as the employer has marked CV as mandatory.", 400
+          "Resume is required for this job as the employer has marked CV as mandatory from MongoDB.", 400
         )
       );
     }

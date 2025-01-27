@@ -353,8 +353,8 @@ const Register = () => {
             <button
               type="button"
               onClick={handleLoginRedirect}
-              className="w-full bg-green-800 hover:bg-green-900 text-white py-2 px-4 rounded-lg transition duration-200 ease-in-out"
-            >
+              className="w-full border-2 border-green-800 text-green-800 py-2 px-4 rounded-lg hover:bg-green-800 hover:text-white transition duration-200 ease-in-out">
+
               Login
             </button>
           </div>

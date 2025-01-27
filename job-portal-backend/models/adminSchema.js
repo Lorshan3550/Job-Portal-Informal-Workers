@@ -4,10 +4,17 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const adminSchema = new mongoose.Schema({
-    adminId: { type: mongoose.Schema.Types.ObjectId, auto: true },
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+  adminId: { type: mongoose.Schema.Types.ObjectId, auto: true },
+  role: { type: 'String', enum: ['Admin', 'SuperAdmin'], default: 'Admin', required: false },
+  name: { type: String, required: true },
+  email: {
+    type: String, required: true, unique: true, validate: [validator.isEmail, "Please provide a valid Email!"],
+  },
+  password: {
+    type: String, required: [true, "Please provide a Password!"],
+    minLength: [8, "Password must contain at least 8 characters!"],
+    select: false,
+  }
 });
 
 //ENCRYPTING THE PASSWORD WHEN THE USER REGISTERS OR MODIFIES HIS PASSWORD
@@ -31,6 +38,5 @@ adminSchema.methods.getJWTToken = function () {
 };
 
 
-  
-export const Admin =  mongoose.model('Admin', adminSchema);
-  
+
+export const Admin = mongoose.model('Admin', adminSchema);

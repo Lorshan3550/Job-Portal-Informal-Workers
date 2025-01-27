@@ -1,12 +1,12 @@
 // import React from "react";
-import { useNavigate } from "react-router-dom";  // Import useNavigate
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Footer from "../Layout/Footer";
 
 const NotFound = () => {
-  const navigate = useNavigate();  // Initialize navigate function
+  const navigate = useNavigate(); // Initialize navigate function
 
   const handleClick = () => {
-    navigate("/");  // Redirect to the home page
+    navigate("/"); // Redirect to the home page
   };
 
   return (
@@ -24,13 +24,13 @@ const NotFound = () => {
             <img
               src="/notfound1.jpg"
               alt="notfound"
-              className="max-w-xs mx-auto border-2 border-gray-300 rounded-lg shadow-xl"
+              className="max-w-lg mx-auto border-2 border-gray-300 rounded-lg shadow-xl"
             />
           </section>
 
           {/* Error Message Section */}
           <section>
-            <h4 className="text-sm text-gray-800 mt-4 mb-6 text-center leading-relaxed">
+            <h4 className="text-lg text-gray-800 mt-4 mb-6 text-center leading-relaxed">
               Sorry, the page you look for doesn't exist.
             </h4>
           </section>
@@ -38,7 +38,7 @@ const NotFound = () => {
           {/* Button Section */}
           <section>
             <button
-              onClick={handleClick}  // Add the onClick event handler
+              onClick={handleClick} // Add the onClick event handler
               className="bg-green-800 hover:bg-green-900 focus:ring-2 focus:ring-green-800 active:bg-green-900 text-white py-2 px-4 rounded-lg transition duration-200 ease-in-out"
             >
               Back to Home
@@ -48,7 +48,7 @@ const NotFound = () => {
       </div>
 
       {/* Footer (Fixed at the bottom) */}
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 };

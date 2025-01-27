@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../../main";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { AiOutlineClose } from "react-icons/ai"; // Import the close icon
+import { AiOutlineClose } from "react-icons/ai";
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
@@ -14,7 +14,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.get(
-        "", // Replace with your logout API endpoint
+        "", 
         {
           withCredentials: true,
         }
@@ -32,7 +32,7 @@ const Navbar = () => {
     <nav
       className={`${
         isAuthorized ? "block" : "hidden"
-      } fixed top-0 left-0 w-full bg-green-800 text-white shadow-lg z-50`}
+      } fixed top-0 left-0 w-full bg-green-900 text-white shadow-lg z-50`}
     >
       <div className="container mx-auto px-8  flex items-center justify-between">
         {/* Logo Section */}
@@ -52,62 +52,86 @@ const Navbar = () => {
           }`}
         >
           <li>
-            <Link
+            <NavLink
               to="/"
               onClick={() => setShow(false)}
-              className="hover:text-gray-200"
+              className={({ isActive }) =>
+                isActive
+                  ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                  : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+              }
             >
               HOME
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link
-              to="/"
+            <NavLink
+              to="/aboutus"
               onClick={() => setShow(false)}
-              className="hover:text-gray-200"
+              className={({ isActive }) =>
+                isActive
+                  ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                  : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+              }
             >
               ABOUT US
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link
+            <NavLink
               to="/job/getall"
               onClick={() => setShow(false)}
-              className="hover:text-gray-200"
+              className={({ isActive }) =>
+                isActive
+                  ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                  : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+              }
             >
               ALL JOBS
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link
+            <NavLink
               to="/applications/me"
               onClick={() => setShow(false)}
-              className="hover:text-gray-200"
+              className={({ isActive }) =>
+                isActive
+                  ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                  : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+              }
             >
               {user && user.role === "Employer"
                 ? "APPLICANT'S APPLICATIONS"
                 : "MY APPLICATIONS"}
-            </Link>
+            </NavLink>
           </li>
           {user && user.role === "Employer" ? (
             <>
               <li>
-                <Link
+                <NavLink
                   to="/job/post"
                   onClick={() => setShow(false)}
-                  className="hover:text-gray-200"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                      : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+                  }
                 >
                   POST NEW JOB
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to="/job/me"
                   onClick={() => setShow(false)}
-                  className="hover:text-gray-200"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                      : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+                  }
                 >
                   VIEW YOUR JOBS
-                </Link>
+                </NavLink>
               </li>
             </>
           ) : null}

@@ -78,7 +78,7 @@ const jobSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a city name."],
   },
-  location: {
+  address: {
     type: String,
     required: true,
   },
@@ -190,7 +190,7 @@ jobSchema.pre("save", function (next) {
   next();
 });
 
-// Pre-save validation: Ensure jobs are not posted by users with the 'Worker' role
+// Pre-save validation: Ensure jobs are not posted by users with the 'JobSeeker' role
 jobSchema.pre("save", async function (next) {
   const user = await User.findById(this.postedBy);
 

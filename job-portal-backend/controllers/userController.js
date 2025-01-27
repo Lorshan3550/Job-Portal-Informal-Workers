@@ -43,8 +43,8 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     location,
     province : province.toLowerCase(),
     district : district.toLowerCase(),
-    skills : role === "Worker" ? skills || [] : [], // Only workers can have skills
-    achievements : role === "Worker" ? achievements || [] : [],
+    skills : role === "JobSeeker" ? skills || [] : [], // Only JobSeeker can have skills
+    achievements : role === "JobSeeker" ? achievements || [] : [],
     password,
     role,
     gender,

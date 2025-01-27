@@ -132,3 +132,7 @@ dist
 
 job-portal-backend/config/
 job-portal-backend/node_modules/
+job-portal-backend/.gitignore
+
+
+

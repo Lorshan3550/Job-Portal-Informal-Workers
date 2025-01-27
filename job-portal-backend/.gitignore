@@ -137,4 +137,4 @@ dist
 .pnp.*
 
 
-config/
+config/config.env

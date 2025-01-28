@@ -40,60 +40,60 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // Validation logic (commented out for now)
-    // if (!firstname.trim() || !lastname.trim() || !email || !phone || !password || !province || !district || !role || !location || !dob || !gender) {
-    //   toast.error("Please fill in all required fields.");
-    //   return;
-    // }
+    // Validation logic
+    if (!firstname.trim() || !lastname.trim() || !email || !phone || !password || !province || !district || !role || !location || !dob || !gender) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
 
-    // if (!validateEmail(email)) {
-    //   toast.error("Invalid email format.");
-    //   return;
-    // }
+    if (!validateEmail(email)) {
+      toast.error("Invalid email format.");
+      return;
+    }
 
-    // if (!validatePhone(phone)) {
-    //   toast.error("Phone number must be 10 digits.");
-    //   return;
-    // }
+    if (!validatePhone(phone)) {
+      toast.error("Phone number must be 10 digits.");
+      return;
+    }
 
-    // if (!validatePassword(password)) {
-    //   toast.error("Password must be at least 6 characters long.");
-    //   return;
-    // }
+    if (!validatePassword(password)) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
 
-    // if (role === "Job Seeker" && (!skills || !achievements)) {
-    //   toast.error("Skills and Achievements are required for Job Seekers.");
-    //   return;
-    // }
+    if (role === "Job Seeker" && (!skills || !achievements)) {
+      toast.error("Skills and Achievements are required for Job Seekers.");
+      return;
+    }
 
-    // try {
-    //   const { data } = await axios.post("http://localhost:4000/api/v1/register", {
-    //     firstname,
-    //     middleName,
-    //     lastname,
-    //     email,
-    //     phone,
-    //     password,
-    //     role,
-    //     province,
-    //     district,
-    //     location,
-    //     dob,
-    //     gender,
-    //     personalSummary,
-    //     skills,
-    //     achievements,
-    //   }, {
-    //     headers: { "Content-Type": "application/json" },
-    //     withCredentials: true,
-    //   });
+    try {
+      const { data } = await axios.post("http://localhost:4000/api/v1/register", {
+        firstname,
+        middleName,
+        lastname,
+        email,
+        phone,
+        password,
+        role,
+        province,
+        district,
+        location,
+        dob,
+        gender,
+        personalSummary,
+        skills,
+        achievements,
+      }, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
-    //   toast.success(data.message);
-    //   setIsAuthorized(true);
-    //   navigate("/login");
-    // } catch (error) {
-    //   toast.error(error.response?.data?.message || "Registration failed.");
-    // }
+      toast.success(data.message);
+      setIsAuthorized(true);
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Registration failed.");
+    }
   };
 
   // Function to navigate to Login page
@@ -353,8 +353,8 @@ const Register = () => {
             <button
               type="button"
               onClick={handleLoginRedirect}
-              className="w-full border-2 border-green-800 text-green-800 py-2 px-4 rounded-lg hover:bg-green-800 hover:text-white transition duration-200 ease-in-out">
-
+              className="w-full border-2 border-green-800 text-green-800 py-2 px-4 rounded-lg hover:bg-green-800 hover:text-white transition duration-200 ease-in-out"
+            >
               Login
             </button>
           </div>

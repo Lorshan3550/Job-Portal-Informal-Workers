@@ -41,7 +41,19 @@ const Register = () => {
     e.preventDefault();
 
     // Validation logic
-    if (!firstname.trim() || !lastname.trim() || !email || !phone || !password || !province || !district || !role || !location || !dob || !gender) {
+    if (
+      !firstname.trim() ||
+      !lastname.trim() ||
+      !email ||
+      !phone ||
+      !password ||
+      !province ||
+      !district ||
+      !role ||
+      !location ||
+      !dob ||
+      !gender
+    ) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -67,26 +79,30 @@ const Register = () => {
     }
 
     try {
-      const { data } = await axios.post("http://localhost:4000/api/v1/register", {
-        firstname,
-        middleName,
-        lastname,
-        email,
-        phone,
-        password,
-        role,
-        province,
-        district,
-        location,
-        dob,
-        gender,
-        personalSummary,
-        skills,
-        achievements,
-      }, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+      const { data } = await axios.post(
+        "http://localhost:4000/api/v1/register",
+        {
+          firstname,
+          middleName,
+          lastname,
+          email,
+          phone,
+          password,
+          role,
+          province,
+          district,
+          location,
+          dob,
+          gender,
+          personalSummary,
+          skills,
+          achievements,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
 
       toast.success(data.message);
       setIsAuthorized(true);
@@ -102,7 +118,7 @@ const Register = () => {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center min-h-screen mt-16 bg-gray-50">
+    <section className="flex flex-col justify-center items-center min-h-screen  bg-gradient-to-r from-green-50 via-green-100 to-green-50">
       <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
         <div className="text-center mb-6">
           <img src="/logo.png" alt="logo" className="w-20 mx-auto mb-4" />
@@ -120,7 +136,7 @@ const Register = () => {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 "
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-800 "
             >
               <option value="">Select Role</option>
               <option value="Employer">Employer</option>
@@ -133,7 +149,7 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               First Name
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
+            <div className="flex items-center border border-gray-300 rounded-md focus:outline focus:outline-sky-500">
               <FaUser className="ml-2 text-gray-600" />
               <input
                 type="text"
@@ -274,7 +290,7 @@ const Register = () => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Location
+              Address
             </label>
             <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
               <FaMapMarkerAlt className="ml-2 text-gray-600" />
@@ -349,14 +365,16 @@ const Register = () => {
             </button>
           </div>
 
-          <div className="mt-4 col-span-2">
-            <button
-              type="button"
-              onClick={handleLoginRedirect}
-              className="w-full border-2 border-green-800 text-green-800 py-2 px-4 rounded-lg hover:bg-green-800 hover:text-white transition duration-200 ease-in-out"
-            >
-              Login
-            </button>
+          <div className="mt-4 col-span-2 text-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <span
+                onClick={handleLoginRedirect}
+                className="text-green-700 font-semibold cursor-pointer hover:underline"
+              >
+                Login here
+              </span>
+            </p>
           </div>
         </form>
       </div>

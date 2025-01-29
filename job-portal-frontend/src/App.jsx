@@ -1,12 +1,14 @@
 import React, { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
-import {Context} from "./main";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/Auth/Login";
-import Register from "./components/Auth/Register";
+import { Context } from "./main";
+import axios from "axios";
 import { Toaster } from "react-hot-toast";
+
 import Navbar from "./components/Layout/Navbar";
 import Footer from "./components/Layout/Footer";
+import Login from "./components/Auth/Login";
+import Register from "./components/Auth/Register";
 import Home from "./components/Home/Home";
 import Jobs from "./components/Job/Jobs";
 import JobDetails from "./components/Job/JobDetails";
@@ -14,21 +16,19 @@ import MyJobs from "./components/Job/MyJobs";
 import PostJob from "./components/Job/PostJob";
 import Application from "./components/Application/Application";
 import MyApplications from "./components/Application/MyApplications";
-import NotFound from "./components/NotFound/NotFound";
 import AboutUs from "./components/About/Aboutus";
-import axios from "axios";
+import NotFound from "./components/NotFound/NotFound";
 
-const App = () => {
+const AppContent = () => {
+  const location = useLocation(); // Get current route
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
           "",
-          
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         setUser(response.data.user);
         setIsAuthorized(true);
@@ -38,18 +38,13 @@ const App = () => {
     };
     fetchUser();
   }, [isAuthorized]);
-  
 
-  // if (isAuthorized){
-  //   return <Navigate to ={"/"}/>
-  // }
+  // Hide Navbar & Footer on Login and Register Pages
+  const hideHeaderFooter = location.pathname === "/register" || location.pathname === "/login";
 
-
-  
   return (
     <>
-    <Router>
-      <Navbar/>
+      {!hideHeaderFooter && <Navbar />}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -63,11 +58,16 @@ const App = () => {
         <Route path="/applications/me" element={<MyApplications />} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-      <Footer/>
-      <Toaster/>
-    </Router>
+      {!hideHeaderFooter && <Footer />}
+      <Toaster />
     </>
-  )
-}
+  );
+};
 
-export default App
+const App = () => (
+  <Router>
+    <AppContent />
+  </Router>
+);
+
+export default App;

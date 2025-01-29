@@ -11,6 +11,8 @@ const Navbar = () => {
   const { isAuthorized, setIsAuthorized, user } = useContext(Context);
   const navigateTo = useNavigate();
 
+  
+
   const handleLogout = async () => {
     try {
       const response = await axios.get(
@@ -34,7 +36,7 @@ const Navbar = () => {
         isAuthorized ? "block" : "hidden"
       } fixed top-0 left-0 w-full bg-green-900 text-white shadow-lg z-50`}
     >
-      <div className="container mx-auto px-8  flex items-center justify-between">
+      <div className="container mx-auto px-8  flex items-center justify-between ">
         {/* Logo Section */}
         <div className="logo relative flex">
           <img src="/logo.png" alt="logo" className="h-18" />

@@ -42,21 +42,17 @@ const Login = () => {
   // }
 
   return (
-    <section className="flex min-h-screen items-center justify-center bg-gradient-to-r from-green-50 via-green-100 to-green-50 mt-10">
+    <section className="flex min-h-screen items-center justify-center bg-gradient-to-r from-green-50 via-green-100 to-green-50 ">
       <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg flex flex-col w-full max-w-md">
         {/* Logo Section */}
-    <div className="text-center mb-6">
-      <img
-        src="logo.png" 
-        alt="Logo"
-        className="mx-auto w-20 h-20" 
-      />
-    </div>
+        <div className="text-center mb-6">
+          <img src="logo.png" alt="Logo" className="mx-auto w-20 h-20" />
+        </div>
         <h3 className="text-2xl font-semibold text-center text-green-800 mb-6">
           Login to your account
         </h3>
         <form onSubmit={handleLogin} className="w-full">
-          <div className="mb-4 relative">
+          {/* <div className="mb-4 relative">
             <label className="block text-sm font-medium mb-2">Login As</label>
             <select
               value={role}
@@ -68,7 +64,7 @@ const Login = () => {
               <option value="Employer">Employer</option>
             </select>
             <FaRegUser className="absolute top-1/2 transform -translate-y-1/2 right-4 text-gray-500" />
-          </div>
+          </div> */}
           <div className="mb-4 relative">
             <label className="block text-sm font-medium mb-2">
               Email Address
@@ -109,12 +105,23 @@ const Login = () => {
             Forgot Password?
           </Link>
 
-          <Link
+          {/* <Link
             to={"/register"}
             className="block text-center mt-4 text-sm text-green-800 border border-green-800 rounded-lg py-2 px-4 hover:bg-green-800 hover:text-white transition duration-300"
           >
             Register Now
-          </Link>
+          </Link> */}
+          <div className="mt-4 col-span-2 text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="text-green-700 font-semibold cursor-pointer hover:underline"
+              >
+                Register here
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </section>

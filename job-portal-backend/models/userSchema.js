@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import validator from "validator";
+import crypto from "crypto"
 
 import { provinceOnly, sriLankaProvinces } from "../utils/commonVariables.js";
 
@@ -100,6 +101,13 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  passwordResetToken: {
+    type: String, // Store hashed version of reset code
+    select: false, // Never expose it in API responses
+  },
+  passwordResetExpires: {
+    type: Date, // Expiration time for reset code
+  },
 });
 
 // Virtual field to calculate age
@@ -138,6 +146,14 @@ userSchema.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRE,
   });
+};
+
+// Method to generate and store password reset token
+userSchema.methods.createPasswordResetToken = function () {
+  const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase(); // 6-char alphanumeric code
+  this.passwordResetToken = bcrypt.hashSync(resetCode, 10); // Hash the code for security
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // Expire in 10 minutes
+  return resetCode; // Return the plain text code to send via email
 };
 
 

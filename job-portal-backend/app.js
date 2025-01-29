@@ -2,6 +2,7 @@ import express from "express";
 import dbConnection  from "./database/dbConnection.js";
 import jobRouter from "./routes/jobRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import authRouter from "./routes/authRoutes.js"
 import applicationRouter from "./routes/applicationRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
@@ -48,6 +49,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/job", jobRouter);
 app.use("/api/v1/files", fileRouter);
 app.use("/api/v1/application", applicationRouter);

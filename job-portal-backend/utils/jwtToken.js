@@ -14,3 +14,12 @@ export const sendToken = (user, statusCode, res, message) => {
     token,
   });
 };
+
+export const createResetToken = (user) =>  {
+  const resetToken =  jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
+        expiresIn: "10m",
+        httpOnly: true,
+  });
+
+  return resetToken
+}

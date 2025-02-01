@@ -27,11 +27,11 @@ const ResetPassword = () => {
     // Redirect to login page after 2 seconds
     setTimeout(() => {
       navigate("/login");
-    }, 1000);
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center  bg-gradient-to-r from-green-50 via-green-100 to-green-50">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-semibold text-gray-700 text-center mb-4">
           Reset Password

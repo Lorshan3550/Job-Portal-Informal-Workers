@@ -18,6 +18,9 @@ import Application from "./components/Application/Application";
 import MyApplications from "./components/Application/MyApplications";
 import AboutUs from "./components/About/Aboutus";
 import NotFound from "./components/NotFound/NotFound";
+import ForgotPassword from './components/Auth/ForgotPassword';
+import ResetPassword from './components/Auth/ResetPassword';
+import VerifyCode from './components/Auth/VerifyCode';
 
 const AppContent = () => {
   const location = useLocation(); // Get current route
@@ -48,6 +51,9 @@ const AppContent = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verifycode" element={<VerifyCode />} />
         <Route path="/" element={<Home />} />
         <Route path="/job/getall" element={<Jobs />} />
         <Route path="/job/:id" element={<JobDetails />} />
@@ -56,7 +62,7 @@ const AppContent = () => {
         <Route path="/job/me" element={<MyJobs />} />
         <Route path="/application/:id" element={<Application />} />
         <Route path="/applications/me" element={<MyApplications />} />
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {!hideHeaderFooter && <Footer />}
       <Toaster />

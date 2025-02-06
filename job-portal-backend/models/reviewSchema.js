@@ -68,6 +68,11 @@ const reviewSchema = new mongoose.Schema({
     required: false,
   }, // Specific rating for communication (optional)
 
+  complaint : {
+    type : String,
+    required : false
+  },
+
   flagged: {
     type: Boolean,
     default: false,
@@ -114,7 +119,7 @@ const reviewSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: ['ClientToJobSeeker', 'JobSeekerToClient'], // Add new types as needed
-    required: true,
+    required: false,
   }, // Defines whether this is an employer reviewing a job seeker or vice versa
 
   createdAt: { 
@@ -150,7 +155,6 @@ reviewSchema.pre("save", async function (next) {
   } else {
     return next(new ErrorHandler("Invalid roles for reviewer and reviewee.", 404));
   }
-
   next();
 });
 

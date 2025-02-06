@@ -344,7 +344,8 @@ export const updateApplication = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Validate dynamic questions and answers
-  const jobQuestions = job.questions || [];
+  if (answers && answers.length > 0){
+    const jobQuestions = job.questions || [];
   if (jobQuestions.length > 0) {
     if (!answers || !Array.isArray(answers) || answers.length !== jobQuestions.length) {
       return next(
@@ -382,6 +383,8 @@ export const updateApplication = catchAsyncErrors(async (req, res, next) => {
       }
     }
   }
+  }
+  
 
   // Update the application fields
   if (firstName) application.firstName = firstName;

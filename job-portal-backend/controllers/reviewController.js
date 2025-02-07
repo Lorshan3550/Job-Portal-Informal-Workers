@@ -100,3 +100,140 @@ export const postReview = catchAsyncErrors(async (req, res, next) => {
     review,
   });
 });
+
+
+//Get all reviews
+export const getAllReviews = catchAsyncErrors(async (req, res, next) => {
+  const reviews = await Review.find();
+
+  res.status(200).json({
+    success: true,
+    reviews,
+  });
+});
+
+// Get reviews based on logged-in user
+export const getUserReviews = catchAsyncErrors(async (req, res, next) => {
+  const { _id: userId } = req.user;
+
+  // Fetch reviews where the user is the reviewer
+  const reviewsGiven = await Review.find({ reviewerId: userId });
+
+  // Fetch reviews where the user is the reviewee
+  const reviewsReceived = await Review.find({ revieweeId: userId });
+
+  res.status(200).json({
+    success: true,
+    reviewsGiven,
+    reviewsReceived,
+  });
+});
+
+// Get reviews based on user ID from path parameter
+export const getUserReviewsById = catchAsyncErrors(async (req, res, next) => {
+  const { userId } = req.params;
+
+  // Validate if the user exists
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
+
+  // Fetch reviews where the user is the reviewer
+  const reviewsGiven = await Review.find({ reviewerId: userId });
+
+  // Fetch reviews where the user is the reviewee
+  const reviewsReceived = await Review.find({ revieweeId: userId });
+
+  res.status(200).json({
+    success: true,
+    reviewsGiven,
+    reviewsReceived,
+  });
+});
+
+
+// Get reviews based on job ID from path parameter
+export const getReviewsByJobId = catchAsyncErrors(async (req, res, next) => {
+  const { jobId } = req.params;
+
+  // Validate if the job exists
+  const job = await Job.findById(jobId);
+  if (!job) {
+    return next(new ErrorHandler("Job not found.", 404));
+  }
+
+  // Fetch reviews for the job
+  const reviews = await Review.find({ jobId });
+
+  // Categorize reviews based on user role
+  const clientReviews = [];
+  const jobSeekerReviews = [];
+
+  for (const review of reviews) {
+    const reviewer = await User.findById(review.reviewerId);
+    if (reviewer.role === "Client") {
+      clientReviews.push(review);
+    } else if (reviewer.role === "JobSeeker") {
+      jobSeekerReviews.push(review);
+    }
+  }
+
+  res.status(200).json({
+    success: true,
+    clientReviews,
+    jobSeekerReviews,
+  });
+});
+
+
+// Update a review
+export const updateReview = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+  const { rating, completedWork, comments, title, workQuality, professionalism, communication, isAnonymous, attachments } = req.body;
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Update the review fields
+  if (rating !== undefined) review.rating = rating;
+  if (completedWork !== undefined) review.completedWork = completedWork;
+  if (comments !== undefined) review.comments = comments;
+  if (title !== undefined) review.title = title;
+  if (workQuality !== undefined) review.workQuality = workQuality;
+  if (professionalism !== undefined) review.professionalism = professionalism;
+  if (communication !== undefined) review.communication = communication;
+  if (isAnonymous !== undefined) review.isAnonymous = isAnonymous;
+  if (attachments !== undefined) review.attachments = attachments;
+
+  // Save the updated review
+  await review.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Review updated successfully!",
+    review,
+  });
+});
+
+// Delete a review
+export const deleteReview = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Delete the review
+  await review.remove();
+
+  res.status(200).json({
+    success: true,
+    message: "Review deleted successfully!",
+  });
+});

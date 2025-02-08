@@ -7,6 +7,7 @@ import applicationRouter from "./routes/applicationRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import fileRouter from "./routes/fileRoutes.js"
+import complainRouter from "./routes/complainRoutes.js";
 import dotenv from 'dotenv'
 // import { config } from "dotenv";
 import cors from "cors";
@@ -55,6 +56,8 @@ app.use("/api/v1/files", fileRouter);
 app.use("/api/v1/application", applicationRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/review", reviewRouter);
+app.use("/api/v1/complain", complainRouter);
+
 
 
 dbConnection();

@@ -1,103 +1,93 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Search, MapPin, Briefcase } from "lucide-react";
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Context } from "../../main";
 
-const AllJobs = () => {
-  const navigate = useNavigate();
+const Jobs = () => {
+  const { isAuthorized } = useContext(Context);
+  const navigateTo = useNavigate();
 
-  const jobs = [
+  // Sample job data for UI testing
+  const sampleJobs = [
     {
-      id: 1,
+      _id: "1",
       title: "Construction Worker",
-      location: "Kilinochchi",
-      salary: "LKR 1500/hour",
+      category: "Construction",
+      country: "Sri Lanka",
     },
     {
-      id: 2,
-      title: "Warehouse Assistant",
-      location: "Mullaitivu",
-      salary: "LKR 1450/hour",
+      _id: "2",
+      title: "Housekeeper",
+      category: "Hospitality",
+      country: "Sri Lanka",
     },
     {
-      id: 3,
-      title: "Cleaning Staff",
-      location: "Nallur, Jaffna",
-      salary: "LKR 1800/hour",
-    },
-    {
-      id: 4,
+      _id: "3",
       title: "Delivery Driver",
-      location: "Vavuniya",
-      salary: "LKR 2100/hour",
+      category: "Logistics",
+      country: "Sri Lanka",
     },
     {
-      id: 5,
-      title: "Farm Worker",
-      location: "Maradana, Colombo",
-      salary: "LKR 2300/hour",
+      _id: "4",
+      title: "Warehouse Assistant",
+      category: "Retail",
+      country: "Sri Lanka",
+    },
+    {
+      _id: "5",
+      title: "Security Guard",
+      category: "Security",
+      country: "Sri Lanka",
+    },
+    {
+      _id: "6",
+      title: "Gardener",
+      category: "Landscaping",
+      country: "Sri Lanka",
     },
   ];
 
-  const [search, setSearch] = useState("");
-
-  const filteredJobs = jobs.filter(
-    (job) =>
-      job.title.toLowerCase().includes(search.toLowerCase()) ||
-      job.location.toLowerCase().includes(search.toLowerCase())
-  );
+  // If user is not authorized, redirect to home
+  if (!isAuthorized) {
+    navigateTo("/");
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4 pt-20">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 text-center mb-6">
-          Find Your Job
+    <section className="min-h-screen bg-gradient-to-r from-green-50 via-green-100 to-green-50 py-12 px-4 mt-16">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-semibold text-center text-gray-800 mb-10">
+          ALL AVAILABLE JOBS
         </h1>
 
-        {/* Search Bar */}
-        <div className="relative mb-6">
-          <input
-            type="text"
-            placeholder="Search by job title or location..."
-            className="w-full p-4 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-800 shadow-md"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Search className="absolute left-4 top-4 text-gray-500" size={20} />
-        </div>
-
-        {/* Job Listings */}
-        <div className="grid gap-6 font-bold">
-          {filteredJobs.length > 0 ? (
-            filteredJobs.map((job) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {sampleJobs.length > 0 ? (
+            sampleJobs.map((job) => (
               <div
-                key={job.id}
-                className="bg-white p-6 rounded-lg shadow-lg flex justify-between items-center hover:shadow-xl transition-transform transform hover:-translate-y-1"
+                key={job._id}
+                className="relative bg-gradient-to-br from-white to-gray-100 shadow-lg p-6 rounded-2xl border border-gray-300 hover:shadow-2xl transform hover:scale-105 transition-all duration-300 cursor-pointer group"
               >
-                <div>
-                  <h2 className="text-lg  text-gray-700 flex items-center gap-2">
-                    <Briefcase className="" size={20} /> {job.title}
-                  </h2>
-                  <p className="text-gray-500 flex items-center gap-2">
-                    <MapPin className="text-blue-500" size={20} />{" "}
-                    {job.location}
-                  </p>
-                  <p className="text-green-700  text-lg">{job.salary}</p>
-                </div>
-                <button
-                  onClick={() => navigate(`/apply/${job.id}`)}
-                  className="border-2 border-green-700 text-green-700 px-5 py-3 rounded-lg hover:bg-green-800 hover:text-white transition"
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {job.title}
+                </h2>
+                <p className="text-gray-600 mt-2">{job.category}</p>
+                <p className="text-gray-500">{job.country}</p>
+
+                <Link
+                  to={`/job/${job._id}`}
+                  className="inline-block mt-5 bg-green-800 text-white text-lg rounded-full px-6 py-2 shadow-md border-2 border-transparent hover:border-white hover:bg-green-700 hover:scale-105 transition-all duration-300"
                 >
-                  Apply Now
-                </button>
+                  Job Details
+                </Link>
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center">No jobs found.</p>
+            <p className="text-gray-500 text-center col-span-full">
+              No jobs available at the moment.
+            </p>
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default AllJobs;
+export default Jobs;

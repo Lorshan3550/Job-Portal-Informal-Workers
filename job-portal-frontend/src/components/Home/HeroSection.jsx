@@ -9,12 +9,12 @@ const HeroSection = () => {
       subTitle: "Live Job",
       icon: <FaSuitcase className="text-4xl text-green-600" />,
     },
-    {
-      id: 2,
-      title: "91,220",
-      subTitle: "Companies",
-      icon: <FaBuilding className="text-4xl text-blue-600" />,
-    },
+    // {
+    //   id: 2,
+    //   title: "91,220",
+    //   subTitle: "Companies",
+    //   icon: <FaBuilding className="text-4xl text-blue-600" />,
+    // },
     {
       id: 3,
       title: "2,34,200",
@@ -32,19 +32,32 @@ const HeroSection = () => {
     <div className="bg-gradient-to-r from-green-50 via-green-100 to-green-50 py-12">
       <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between">
         <div className="text-center md:text-left md:w-1/2">
-          <h1 className="text-4xl font-bold text-gray-900 leading-tight">Find a job that suits</h1>
-          <h1 className="text-4xl font-bold text-green-600 leading-tight">your interests and skills</h1>
+          <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+            Find a job that suits
+          </h1>
+          <h1 className="text-4xl font-bold text-green-600 leading-tight">
+            your interests and skills
+          </h1>
           <p className="text-gray-700 mt-4 text-lg">
-            Discover job opportunities that match your skills and passions.
-            Connect with employers seeking talent like yours for rewarding
-            careers.
+            Discover job opportunities tailored to your skills and passions,
+            whether you're looking for entry-level roles or hands-on work.
+            Connect with employers who are actively seeking individuals for
+            positions in various industries such as hospitality, construction,
+            transportation, and more. These roles offer a chance to gain
+            experience, develop your skills, and build a rewarding career. Join
+            a growing workforce and take the first step toward a stable and
+            fulfilling job opportunity today.
           </p>
         </div>
         <div className="md:w-1/2 flex justify-center mt-6 md:mt-0">
-          <img src="/heroS1.png" alt="hero" className="w-full max-w-lg rounded-lg " />
+          <img
+            src="/heroS1.png"
+            alt="hero"
+            className="w-full max-w-lg rounded-lg "
+          />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12 container mx-auto px-6 md:px-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 container mx-auto px-6 md:px-12">
         {details.map((element) => (
           <div
             key={element.id}

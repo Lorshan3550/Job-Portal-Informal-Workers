@@ -23,7 +23,7 @@ import ResetPassword from './components/Auth/ResetPassword';
 import VerifyCode from './components/Auth/VerifyCode';
 
 const AppContent = () => {
-  const location = useLocation(); // Get current route
+  const location = useLocation(); 
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const AppContent = () => {
     fetchUser();
   }, [isAuthorized]);
 
-  // Hide Navbar & Footer on Login and Register Pages
+
   const hideHeaderFooter = location.pathname === "/register" || location.pathname === "/login";
 
   return (

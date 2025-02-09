@@ -4,6 +4,8 @@ import { FaCheck } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { Context } from "../../main";
 import { useNavigate } from "react-router-dom";
+import { FaEdit } from "react-icons/fa";   
+import { MdDelete } from "react-icons/md"; 
 
 const MyJobs = () => {
   const [myJobs, setMyJobs] = useState([]);

@@ -21,6 +21,8 @@ import NotFound from "./components/NotFound/NotFound";
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
 import VerifyCode from './components/Auth/VerifyCode';
+import { Edit } from 'lucide-react';
+import Profile from './components/Home/Profile';
 
 const AppContent = () => {
   const location = useLocation(); 
@@ -55,6 +57,7 @@ const AppContent = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verifycode" element={<VerifyCode />} />
         <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/job/getall" element={<Jobs />} />
         <Route path="/job/:id" element={<JobDetails />} />
         <Route path="/aboutus" element={<AboutUs />} />

@@ -118,8 +118,8 @@ const Register = () => {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center min-h-screen  bg-gradient-to-r from-green-50 via-green-100 to-green-50">
-      <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
+    <section className="flex flex-col justify-center items-center min-h-screen  bg-gradient-to-r from-green-50 via-green-100 to-green-50 py-12">
+      <div className="w-full max-w-4xl p-10 bg-white rounded-2xl shadow-2xl border border-gray-200">
         <div className="text-center mb-6">
           <img src="/logo.png" alt="logo" className="w-20 mx-auto mb-4" />
           <h3 className="text-2xl font-semibold">Create a new account</h3>

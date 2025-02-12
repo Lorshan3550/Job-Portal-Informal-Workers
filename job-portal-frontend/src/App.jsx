@@ -22,7 +22,7 @@ import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
 import VerifyCode from './components/Auth/VerifyCode';
 import { Edit } from 'lucide-react';
-import Profile from './components/Home/Profile';
+import Profile from './components/Auth/Profile';
 
 const AppContent = () => {
   const location = useLocation(); 

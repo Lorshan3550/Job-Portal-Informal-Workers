@@ -155,7 +155,7 @@ const Register = () => {
                 type="text"
                 value={firstname}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-4 py-2 "
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 placeholder="Enter First Name"
               />
             </div>
@@ -171,7 +171,7 @@ const Register = () => {
                 type="text"
                 value={lastname}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 placeholder="Enter Last Name"
               />
             </div>
@@ -186,7 +186,7 @@ const Register = () => {
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
@@ -205,7 +205,7 @@ const Register = () => {
               <select
                 value={province}
                 onChange={(e) => setProvince(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
               >
                 <option value="">Select Province</option>
                 {Object.keys(provinces).map((prov) => (
@@ -226,7 +226,7 @@ const Register = () => {
               <select
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 disabled={!province}
               >
                 <option value="">Select District</option>
@@ -250,7 +250,7 @@ const Register = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 placeholder="Enter Email Address"
               />
             </div>
@@ -266,7 +266,7 @@ const Register = () => {
                 type="number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 placeholder="Enter Phone Number"
               />
             </div>
@@ -282,7 +282,7 @@ const Register = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 placeholder="Enter Password"
               />
             </div>
@@ -298,7 +298,7 @@ const Register = () => {
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 placeholder="Enter Location"
               />
             </div>
@@ -314,7 +314,7 @@ const Register = () => {
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                className="w-full px-4 py-2"
+                className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                 onFocus={(e) => e.target.showPicker()} // Triggers the calendar view when the field is focused
               />
             </div>
@@ -333,7 +333,7 @@ const Register = () => {
                     type="text"
                     value={skills}
                     onChange={(e) => setSkills(e.target.value)}
-                    className="w-full px-4 py-2"
+                    className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                     placeholder="Enter Your Skills"
                   />
                 </div>
@@ -348,7 +348,7 @@ const Register = () => {
                     type="text"
                     value={achievements}
                     onChange={(e) => setAchievements(e.target.value)}
-                    className="w-full px-4 py-2"
+                    className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-800"
                     placeholder="Enter Your Achievements"
                   />
                 </div>

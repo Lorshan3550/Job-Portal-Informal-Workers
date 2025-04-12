@@ -42,6 +42,7 @@ build/Release
 node_modules/
 jspm_packages/
 
+
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
@@ -104,6 +105,12 @@ dist
 .temp
 .cache
 
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
 # Docusaurus cache and generated files
 .docusaurus
 
@@ -130,9 +137,4 @@ dist
 .pnp.*
 
 
-job-portal-backend/config/
-job-portal-backend/node_modules/
-job-portal-backend/.gitignore
-
-
-
+config/config.env

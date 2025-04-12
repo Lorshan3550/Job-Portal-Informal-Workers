@@ -68,6 +68,10 @@ const userSchema = new mongoose.Schema({
     type: [String], 
     default: [] 
   }, // Only applicable for Workers
+  workExperiences: { 
+    type: [String], 
+    default: [] 
+  }, // Only applicable for Workers
   achievements: { 
     type: [String], 
     default: [] 

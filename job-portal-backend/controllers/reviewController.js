@@ -237,3 +237,37 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
     message: "Review deleted successfully!",
   });
 });
+
+// Update flagged status and reason of a review
+export const updateReviewFlag = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+  const { flagged, flaggedReason } = req.body;
+
+  // Check if admin is logged in
+  if (!req.admin) {
+    return next(new ErrorHandler("Admin not authorized to update review flag.", 401));
+  }
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Update the flagged status and reason
+  review.flagged = flagged;
+  if (flagged) {
+    review.flaggedReason = flaggedReason;
+  } else {
+    review.flaggedReason = null;
+  }
+
+  // Save the updated review
+  await review.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Review flagged status updated successfully!",
+    review,
+  });
+});

@@ -10,7 +10,7 @@ import { sriLankaProvinces } from "../utils/commonVariables.js";
 
 // Create User
 export const register = catchAsyncErrors(async (req, res, next) => {
-  const { firstName, middleName, lastName, email, personalSummary, phone, province, district, skills, password, role, location, achievements, dateOfBirth, gender } = req.body;
+  const { firstName, middleName, lastName, email, personalSummary, phone, province, district, skills, password, role, location, achievements, dateOfBirth, gender, workExperiences } = req.body;
 
   // Validate required fields
   if (!firstName || !lastName || !email || !phone || !password || !role || !province || !district || !location || !dateOfBirth || !gender) {
@@ -45,6 +45,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     district : district.toLowerCase(),
     skills : role === "JobSeeker" ? skills || [] : [], // Only JobSeeker can have skills
     achievements : role === "JobSeeker" ? achievements || [] : [],
+    workExperiences : role === "JobSeeker" ? workExperiences || [] : [],
     password,
     role,
     gender,
@@ -79,7 +80,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 
 // Update User Basic Information
 export const update = catchAsyncErrors(async (req, res, next) => {
-  const { firstName, middleName, lastName, phone, province, district, skills, personalSummary, location, achievements, gender, dateOfBirth } = req.body;
+  const { firstName, middleName, lastName, phone, province, district, skills, personalSummary, location, achievements, gender, dateOfBirth, workExperiences } = req.body;
   // const userId = req.user._id; // Assuming `req.user` is populated via authentication middleware
   const {userId} = req.params;
 
@@ -118,7 +119,7 @@ export const update = catchAsyncErrors(async (req, res, next) => {
   if (phone) user.phone = phone;
   if (skills && user.role === "Worker") user.skills = skills; // Only workers can update skills
   if (achievements && user.role === "Worker") user.achievements = achievements; // Only workers can update skills
-
+  if (workExperiences && user.role === "Worker") user.workExperiences = workExperiences; // Only workers can update skills
   if (personalSummary) user.personalSummary = personalSummary;
   if (gender) user.gender = gender;
   if (dateOfBirth) user.dateOfBirth = dateOfBirth;

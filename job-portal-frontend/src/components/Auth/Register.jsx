@@ -16,7 +16,7 @@ import {
 const Register = () => {
   const [email, setEmail] = useState("");
   const [firstname, setFirstName] = useState("");
-  const [province, setProvince] = useState("Northern");
+  const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [lastname, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -73,30 +73,30 @@ const Register = () => {
       return;
     }
 
-    if (role === "Job Seeker" && (!skills || !achievements)) {
+    if (role === "JobSeeker" && (!skills || !achievements)) {
       toast.error("Skills and Achievements are required for Job Seekers.");
       return;
     }
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/register",
+        "http://localhost:4000/api/v1/user",
         {
-          firstname,
-          middleName,
-          lastname,
-          email,
-          phone,
-          password,
-          role,
-          province,
-          district,
-          location,
-          dob,
-          gender,
-          personalSummary,
-          skills,
-          achievements,
+          firstName: firstname,
+          middleName: middleName,
+          lastName: lastname,
+          email: email,
+          location: location,
+          personalSummary: personalSummary,
+          phone: phone,
+          province: province,
+          district: district,
+          skills: role === "JobSeeker" ? skills.split(",") : [], // Convert skills to an array
+          achievements: role === "JobSeeker" ? achievements.split(",") : [], // Convert achievements to an array
+          password: password,
+          role: role,
+          dateOfBirth: dob,
+          gender: gender,
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -128,23 +128,7 @@ const Register = () => {
           className="w-full grid grid-cols-1 md:grid-cols-2 gap-4"
           onSubmit={handleRegister}
         >
-          {/* Register As */}
-          <div className="mb-4 col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Register As
-            </label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-800 "
-            >
-              <option value="">Select Role</option>
-              <option value="Employer">Employer</option>
-              <option value="Job Seeker">Job Seeker</option>
-            </select>
-          </div>
-
-          {/* Personal Information */}
+          {/* First Name */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               First Name
@@ -161,6 +145,24 @@ const Register = () => {
             </div>
           </div>
 
+          {/* Middle Name */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Middle Name
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-md focus:outline focus:outline-sky-500">
+              <FaUser className="ml-2 text-gray-600" />
+              <input
+                type="text"
+                value={middleName}
+                onChange={(e) => setMiddleName(e.target.value)}
+                className="w-full px-4 py-2 "
+                placeholder="Enter Middle Name"
+              />
+            </div>
+          </div>
+
+          {/* Last Name */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Last Name
@@ -177,25 +179,71 @@ const Register = () => {
             </div>
           </div>
 
+          {/* Email */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Gender
+              Email Address
             </label>
             <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaUser className="ml-2 text-gray-600" />
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
+              <FaEnvelope className="ml-2 text-gray-600" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2"
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
+                placeholder="Enter Email Address"
+              />
             </div>
           </div>
 
-          {/* Province and District */}
+          {/* Location */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Address
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
+              <FaMapMarkerAlt className="ml-2 text-gray-600" />
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-full px-4 py-2"
+                placeholder="Enter Location"
+              />
+            </div>
+          </div>
+
+          {/* Personal Summary */}
+          <div className="mb-4 col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Personal Summary
+            </label>
+            <textarea
+              value={personalSummary}
+              onChange={(e) => setPersonalSummary(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+              placeholder="Enter a brief personal summary"
+            />
+          </div>
+
+          {/* Phone Number */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
+              <FaPhone className="ml-2 text-gray-600" />
+              <input
+                type="number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full px-4 py-2"
+                placeholder="Enter Phone Number"
+              />
+            </div>
+          </div>
+
+          {/* Province */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Province
@@ -217,6 +265,7 @@ const Register = () => {
             </div>
           </div>
 
+          {/* District */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               District
@@ -239,39 +288,39 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Other Fields */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaEnvelope className="ml-2 text-gray-600" />
+          {/* Skills */}
+          {role === "JobSeeker" && (
+            <div className="mb-4 col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Skills
+              </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Email Address"
+                type="text"
+                value={skills}
+                onChange={(e) => setSkills(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+                placeholder="Enter skills (comma-separated)"
               />
             </div>
-          </div>
+          )}
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone Number
-            </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaPhone className="ml-2 text-gray-600" />
+          {/* Achievements */}
+          {role === "JobSeeker" && (
+            <div className="mb-4 col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Achievements
+              </label>
               <input
-                type="number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Phone Number"
+                type="text"
+                value={achievements}
+                onChange={(e) => setAchievements(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+                placeholder="Enter achievements (comma-separated)"
               />
             </div>
-          </div>
+          )}
 
+          {/* Password */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Password
@@ -288,22 +337,23 @@ const Register = () => {
             </div>
           </div>
 
+          {/* Role */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Address
+              Role
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaMapMarkerAlt className="ml-2 text-gray-600" />
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Location"
-              />
-            </div>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+            >
+              <option value="">Select Role</option>
+              <option value="JobSeeker">Job Seeker</option>
+              <option value="Client">Client</option>
+            </select>
           </div>
 
+          {/* Date of Birth */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Date of Birth
@@ -315,46 +365,25 @@ const Register = () => {
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
                 className="w-full px-4 py-2"
-                onFocus={(e) => e.target.showPicker()} // Triggers the calendar view when the field is focused
               />
             </div>
           </div>
 
-          {/* Conditional Fields for Job Seeker */}
-          {role === "Job Seeker" && (
-            <>
-              <div className="mb-4 col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Skills
-                </label>
-                <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-                  <FaUser className="ml-2 text-gray-600" />
-                  <input
-                    type="text"
-                    value={skills}
-                    onChange={(e) => setSkills(e.target.value)}
-                    className="w-full px-4 py-2"
-                    placeholder="Enter Your Skills"
-                  />
-                </div>
-              </div>
-              <div className="mb-4 col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Achievements
-                </label>
-                <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-                  <FaUser className="ml-2 text-gray-600" />
-                  <input
-                    type="text"
-                    value={achievements}
-                    onChange={(e) => setAchievements(e.target.value)}
-                    className="w-full px-4 py-2"
-                    placeholder="Enter Your Achievements"
-                  />
-                </div>
-              </div>
-            </>
-          )}
+          {/* Gender */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Gender
+            </label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
 
           <div className="col-span-2">
             <button
@@ -363,18 +392,6 @@ const Register = () => {
             >
               Register
             </button>
-          </div>
-
-          <div className="mt-4 col-span-2 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <span
-                onClick={handleLoginRedirect}
-                className="text-green-700 font-semibold cursor-pointer hover:underline"
-              >
-                Login here
-              </span>
-            </p>
           </div>
         </form>
       </div>

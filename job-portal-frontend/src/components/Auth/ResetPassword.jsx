@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -8,27 +10,64 @@ const ResetPassword = () => {
 
   const navigate = useNavigate(); // Hook for navigation
 
-  const handleResetPassword = (e) => {
-    e.preventDefault();
+  // const handleResetPassword = (e) => {
+  //   e.preventDefault();
 
+  //   if (!password || !confirmPassword) {
+  //     setMessage("Please fill in all fields.");
+  //     return;
+  //   }
+
+  //   if (password !== confirmPassword) {
+  //     setMessage("Passwords do not match.");
+  //     return;
+  //   }
+
+  //   // Simulate password reset success
+  //   setMessage("Your password has been reset successfully!");
+
+  //   // Redirect to login page after 2 seconds
+  //   setTimeout(() => {
+  //     navigate("/login");
+  //   }, 2000);
+  // };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+  
     if (!password || !confirmPassword) {
       setMessage("Please fill in all fields.");
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setMessage("Passwords do not match.");
       return;
     }
-
-    // Simulate password reset success
-    setMessage("Your password has been reset successfully!");
-
-    // Redirect to login page after 2 seconds
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
+  
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/auth/change-password",
+        {
+          newPassword: password,
+          confirmNewPassword: confirmPassword,
+        },
+        {
+          withCredentials: true, // VERY IMPORTANT: sends the cookie containing the token
+        }
+      );
+  
+      setMessage(response.data.message || "Password reset successful!");
+  
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || "Something went wrong.";
+      setMessage(errorMsg);
+    }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center  bg-gradient-to-r from-green-50 via-green-100 to-green-50">

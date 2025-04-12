@@ -5,53 +5,83 @@ import { RiLock2Fill, RiEyeFill, RiEyeCloseFill } from "react-icons/ri";
 import { Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Context } from "../../main";
+import axios from "axios";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { isAuthorized, setIsAuthorized } = useContext(Context);
+  const {isAuthorized, setIsAuthorized } = useContext(Context);
   const [redirect, setRedirect] = useState(false);
 
-  const validateForm = () => {
-    if (!email || !password) {
-      toast.error("All fields are required");
-      return false;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error("Invalid email format");
-      return false;
-    }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
-      return false;
-    }
-    return true;
-  };
+  // const validateForm = () => {
+  //   if (!email || !password) {
+  //     toast.error("All fields are required");
+  //     return false;
+  //   }
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   if (!emailRegex.test(email)) {
+  //     toast.error("Invalid email format");
+  //     return false;
+  //   }
+  //   if (password.length < 6) {
+  //     toast.error("Password must be at least 6 characters long");
+  //     return false;
+  //   }
+  //   return true;
+  // };
+
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   //if (!validateForm()) return;
+    
+  //   const demoEmail = "demo@gmail.com";
+  //   const demoPassword = "12345678";
+
+  //   if (email === demoEmail && password === demoPassword) {
+  //     toast.success("Login successful");
+  //     localStorage.setItem("token", "demo_token_123"); // simulate token
+  //     setIsAuthorized(true);
+  //     setEmail("");
+  //     setPassword("");
+  //     setRedirect(true);
+  //   } else {
+  //     toast.error("Invalid credentials");
+  //   }
+  // };
+
+  // if (redirect) {
+  //   return <Navigate to="/" />;
+  // }
+
+  if(isAuthorized){
+    return <Navigate to={'/'}/>
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    
-    const demoEmail = "demo@gmail.com";
-    const demoPassword = "12345678";
-
-    if (email === demoEmail && password === demoPassword) {
-      toast.success("Login successful");
-      localStorage.setItem("token", "demo_token_123"); // simulate token
-      setIsAuthorized(true);
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4000/api/v1/user/login",
+        { email, password },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log("Output : ", data);
+      toast.success(data.message);
       setEmail("");
       setPassword("");
-      setRedirect(true);
-    } else {
-      toast.error("Invalid credentials");
+      setIsAuthorized(true);
+    } catch (error) {
+      console.error("Error : ", error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
-
-  if (redirect) {
-    return <Navigate to="/" />;
-  }
 
   return (
     <section className="flex min-h-screen items-center justify-center bg-gradient-to-r from-green-50 via-green-100 to-green-50 ">

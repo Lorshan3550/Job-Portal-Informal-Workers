@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const VerifyCode = () => {
   const [code, setCode] = useState("");
@@ -7,29 +9,58 @@ const VerifyCode = () => {
 
   const navigate = useNavigate();
 
-  const handleVerifyCode = (e) => {
+  // const handleVerifyCode = (e) => {
+  //   e.preventDefault();
+
+  //   // Simulated correct verification code
+  //   const correctCode = "123456";
+
+  //   if (!code) {
+  //     setMessage("Please enter the verification code.");
+  //     return;
+  //   }
+
+  //   if (code !== correctCode) {
+  //     setMessage("Invalid verification code. Try again.");
+  //     return;
+  //   }
+
+  //   setMessage("Verification successful!");
+
+  //   // Redirect to Reset Password page after 2 seconds
+  //   setTimeout(() => {
+  //     navigate("/reset-password");
+  //   }, 2000);
+  // };
+
+  const handleVerifyCode = async (e) => {
     e.preventDefault();
-
-    // Simulated correct verification code
-    const correctCode = "123456";
-
+  
     if (!code) {
       setMessage("Please enter the verification code.");
       return;
     }
-
-    if (code !== correctCode) {
-      setMessage("Invalid verification code. Try again.");
-      return;
+  
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/auth/verify-reset-code",
+        { verificationCode: code },
+        { withCredentials: true }
+      );
+  
+      setMessage(response.data.message || "Verification successful!");
+  
+      setTimeout(() => {
+        navigate("/reset-password");
+      }, 2000);
+    } catch (error) {
+      console.error("Error:", error);
+      const errorMsg =
+        error.response?.data?.message || "Something went wrong. Try again.";
+      setMessage(errorMsg);
     }
-
-    setMessage("Verification successful!");
-
-    // Redirect to Reset Password page after 2 seconds
-    setTimeout(() => {
-      navigate("/reset-password");
-    }, 2000);
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center  bg-gradient-to-r from-green-50 via-green-100 to-green-50">

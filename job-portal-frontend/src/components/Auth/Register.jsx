@@ -16,11 +16,11 @@ import {
 const Register = () => {
   const [email, setEmail] = useState("");
   const [firstname, setFirstName] = useState("");
-  const [province, setProvince] = useState("");
-  const [district, setDistrict] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [lastname, setLastName] = useState("");
   const [personalSummary, setPersonalSummary] = useState("");
   const [phone, setPhone] = useState("");
+  const [workExperiences, setWorkExperiences] = useState("");
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [skills, setSkills] = useState("");
@@ -74,28 +74,33 @@ const Register = () => {
       return;
     }
 
-    if (role === "JobSeeker" && (!skills || !achievements)) {
-      toast.error("Skills and Achievements are required for Job Seekers.");
+    if (
+      role === "JobSeeker" &&
+      (!skills || !achievements || !workExperiences)
+    ) {
+      toast.error("Skills, Achievements, and Work Experiences are required for Job Seekers.");
       return;
     }
+    
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/user",
+        "http://localhost:4000/api/v1/user/register", // ✅ corrected endpoint
         {
           firstName: firstname,
           middleName: middleName,
           lastName: lastname,
           email: email,
-          location: location,
           personalSummary: personalSummary,
           phone: phone,
-          province: province,
-          district: district,
-          skills: role === "JobSeeker" ? skills.split(",") : [], // Convert skills to an array
-          achievements: role === "JobSeeker" ? achievements.split(",") : [], // Convert achievements to an array
+          province: province.toLowerCase(), // ✅ ensure lowercase
+          district: district.toLowerCase(), // ✅ ensure lowercase
+          skills: role === "JobSeeker" ? skills.split(",") : [],
+          achievements: role === "JobSeeker" ? achievements.split(",") : [],
+          workExperiences: role === "JobSeeker" ? workExperiences.split(",") : [],
           password: password,
           role: role,
+          location: location,
           dateOfBirth: dob,
           gender: gender,
         },
@@ -104,6 +109,8 @@ const Register = () => {
           withCredentials: true,
         }
       );
+      console.log(data);
+      
 
       toast.success(data.message);
       setIsAuthorized(true);
@@ -144,16 +151,13 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Middle Name
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:outline focus:outline-sky-500">
-              <FaUser className="ml-2 text-gray-600" />
-              <input
-                type="text"
-                value={middleName}
-                onChange={(e) => setMiddleName(e.target.value)}
-                className="w-full px-4 py-2 "
-                placeholder="Enter Middle Name"
-              />
-            </div>
+            <input
+              type="text"
+              value={middleName}
+              onChange={(e) => setMiddleName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter Middle Name"
+            />
           </div>
 
           {/* Last Name */}
@@ -175,33 +179,13 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaEnvelope className="ml-2 text-gray-600" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Email Address"
-              />
-            </div>
-          </div>
-
-          {/* Location */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Address
-            </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaMapMarkerAlt className="ml-2 text-gray-600" />
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Location"
-              />
-            </div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter Email Address"
+            />
           </div>
 
           {/* Personal Summary */}
@@ -212,26 +196,39 @@ const Register = () => {
             <textarea
               value={personalSummary}
               onChange={(e) => setPersonalSummary(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
               placeholder="Enter a brief personal summary"
             />
           </div>
 
-          {/* Phone Number */}
+          {role === "JobSeeker" && (
+            <div className="mb-4 col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Work Experiences
+              </label>
+              <input
+                type="text"
+                value={workExperiences}
+                onChange={(e) => setWorkExperiences(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                placeholder="Enter work experiences (comma-separated)"
+              />
+            </div>
+          )}
+
+
+          {/* Phone */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Phone Number
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaPhone className="ml-2 text-gray-600" />
-              <input
-                type="number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Phone Number"
-              />
-            </div>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter Phone Number"
+            />
           </div>
 
           {/* Province */}
@@ -239,21 +236,18 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Province
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaMapMarkerAlt className="ml-2 text-gray-600" />
-              <select
-                value={province}
-                onChange={(e) => setProvince(e.target.value)}
-                className="w-full px-4 py-2"
-              >
-                <option value="">Select Province</option>
-                {Object.keys(provinces).map((prov) => (
-                  <option key={prov} value={prov}>
-                    {prov}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={province}
+              onChange={(e) => setProvince(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="">Select Province</option>
+              {Object.keys(provinces).map((prov) => (
+                <option key={prov} value={prov}>
+                  {prov}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* District */}
@@ -261,22 +255,19 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               District
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaMapMarkerAlt className="ml-2 text-gray-600" />
-              <select
-                value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-                className="w-full px-4 py-2"
-                disabled={!province}
-              >
-                <option value="">Select District</option>
-                {provinces[province]?.map((dist) => (
-                  <option key={dist} value={dist}>
-                    {dist}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={district}
+              onChange={(e) => setDistrict(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              disabled={!province}
+            >
+              <option value="">Select District</option>
+              {provinces[province]?.map((dist) => (
+                <option key={dist} value={dist}>
+                  {dist}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Skills */}
@@ -289,7 +280,7 @@ const Register = () => {
                 type="text"
                 value={skills}
                 onChange={(e) => setSkills(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder="Enter skills (comma-separated)"
               />
             </div>
@@ -305,7 +296,7 @@ const Register = () => {
                 type="text"
                 value={achievements}
                 onChange={(e) => setAchievements(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder="Enter achievements (comma-separated)"
               />
             </div>
@@ -333,7 +324,7 @@ const Register = () => {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
             >
               <option value="">Select Role</option>
               <option value="JobSeeker">Job Seeker</option>
@@ -341,20 +332,31 @@ const Register = () => {
             </select>
           </div>
 
+          {/* Location */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Location
+            </label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter Location"
+            />
+          </div>
+
           {/* Date of Birth */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Date of Birth
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaCalendarAlt className="ml-2 text-gray-600" />
-              <input
-                type="date"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                className="w-full px-4 py-2"
-              />
-            </div>
+            <input
+              type="date"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            />
           </div>
 
           {/* Gender */}
@@ -365,7 +367,7 @@ const Register = () => {
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
             >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>

@@ -62,6 +62,8 @@ export const sendEmail = async (email, subject, emailContent) => {
           pass: process.env.GMAIL_APP_PASSWORD,
         },
       };
+
+      console.log(" Config for send Email :  ", config)
   
       let transporter = nodemailer.createTransport(config);
   
@@ -132,7 +134,7 @@ export const sendEmailContent = (user, resetCode) => {
             button: {
               color: "#22BC66",
               text: "Reset Password",
-              link: "https://yourjobportal.com/reset-password",
+              link: "http://localhost:5173/verifycode",
             },
           },
           outro: `

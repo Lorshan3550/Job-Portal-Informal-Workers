@@ -10,11 +10,11 @@ const AboutUs = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center bg-white text-center mt-24 px-4">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-green-50 via-green-100 to-green-50 text-center pt-16 px-4 mt-16">
         <div className="space-y-8 max-w-5xl mx-auto">
           {/* About Us Heading */}
           <section className="mb-8">
-            <h2 className="text-3xl font-semibold text-green-800 mb-4">ABOUT US</h2>
+            <h2 className="text-3xl font-semibold text-black mb-4">ABOUT US</h2>
             <p className="text-lg text-gray-700 leading-relaxed mb-6">
               Welcome to JOBSPHERE! We are a leading platform connecting job
               seekers and employers with ease. Our mission is to provide a

@@ -102,6 +102,38 @@ const Navbar = () => {
               ALL JOBS
             </NavLink>
           </li>
+
+          {/* Add Post Job link here */}
+          {/* {user && user.role === "Employer" && (
+            <li>
+              <NavLink
+                to="/post-job"
+                onClick={() => setShow(false)}
+                className={({ isActive }) =>
+                  isActive
+                    ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                    : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+                }
+              >
+                POST JOB
+              </NavLink>
+            </li>
+          )} */}
+
+          <li>
+            <NavLink
+              to="/job/post"
+              onClick={() => setShow(false)}
+              className={({ isActive }) =>
+                isActive
+                  ? "hover:text-gray-200 bg-white text-green-900 px-4 py-2 rounded-lg"
+                  : "hover:text-gray-200 hover:border-2 hover:border-white hover:rounded-lg px-4 py-2"
+              }
+            >
+              POST JOB
+            </NavLink>
+          </li>
+
           <li>
             <NavLink
               to="/applications/me"
@@ -129,11 +161,11 @@ const Navbar = () => {
             {dropdown && (
               <div className="absolute right-0 mt-2 w-40 bg-white text-green-900 rounded-lg shadow-lg">
                 <NavLink
-                  to="/profile/edit"
+                  to="/profile"
                   className="block px-4 py-2 hover:bg-gray-200"
                   onClick={() => setDropdown(false)}
                 >
-                  Edit 
+                  Profile
                 </NavLink>
                 <button
                   onClick={handleLogout}

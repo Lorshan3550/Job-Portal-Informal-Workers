@@ -11,7 +11,7 @@ import {
   FaLock,
   FaMapMarkerAlt,
   FaCalendarAlt,
-} from "react-icons/fa"; // Importing icons
+} from "react-icons/fa";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -19,16 +19,17 @@ const Register = () => {
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [lastname, setLastName] = useState("");
+  const [personalSummary, setPersonalSummary] = useState("");
   const [phone, setPhone] = useState("");
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [skills, setSkills] = useState("");
+  const [achievements, setAchievements] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [location, setLocation] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [personalSummary, setPersonalSummary] = useState("");
-  const [skills, setSkills] = useState("");
-  const [achievements, setAchievements] = useState("");
 
   const { setIsAuthorized } = useContext(Context);
   const navigate = useNavigate();
@@ -108,17 +109,13 @@ const Register = () => {
       setIsAuthorized(true);
       navigate("/login");
     } catch (error) {
+      console.log(error);
       toast.error(error.response?.data?.message || "Registration failed.");
     }
   };
 
-  // Function to navigate to Login page
-  const handleLoginRedirect = () => {
-    navigate("/login");
-  };
-
   return (
-    <section className="flex flex-col justify-center items-center min-h-screen  bg-gradient-to-r from-green-50 via-green-100 to-green-50">
+    <section className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-r from-green-50 via-green-100 to-green-50">
       <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
         <div className="text-center mb-6">
           <img src="/logo.png" alt="logo" className="w-20 mx-auto mb-4" />
@@ -133,16 +130,13 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               First Name
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:outline focus:outline-sky-500">
-              <FaUser className="ml-2 text-gray-600" />
-              <input
-                type="text"
-                value={firstname}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-4 py-2 "
-                placeholder="Enter First Name"
-              />
-            </div>
+            <input
+              type="text"
+              value={firstname}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter First Name"
+            />
           </div>
 
           {/* Middle Name */}
@@ -167,16 +161,13 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Last Name
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaUser className="ml-2 text-gray-600" />
-              <input
-                type="text"
-                value={lastname}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Last Name"
-              />
-            </div>
+            <input
+              type="text"
+              value={lastname}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter Last Name"
+            />
           </div>
 
           {/* Email */}
@@ -325,16 +316,13 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Password
             </label>
-            <div className="flex items-center border border-gray-300 rounded-md focus:ring-2 focus:ring-green-800">
-              <FaLock className="ml-2 text-gray-600" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2"
-                placeholder="Enter Password"
-              />
-            </div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter Password"
+            />
           </div>
 
           {/* Role */}

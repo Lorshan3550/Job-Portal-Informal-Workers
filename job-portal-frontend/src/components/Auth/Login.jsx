@@ -1,7 +1,7 @@
 // src/pages/Login.js
 import React, { useContext, useState } from "react";
 import { MdOutlineMailOutline } from "react-icons/md";
-import { RiLock2Fill } from "react-icons/ri";
+import { RiLock2Fill, RiEyeFill, RiEyeCloseFill } from "react-icons/ri";
 import { Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Context } from "../../main";
@@ -9,6 +9,7 @@ import { Context } from "../../main";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { isAuthorized, setIsAuthorized } = useContext(Context);
   const [redirect, setRedirect] = useState(false);
 
@@ -33,7 +34,6 @@ const Login = () => {
     e.preventDefault();
     if (!validateForm()) return;
     
-    // Demo: predefined email and password for login
     const demoEmail = "demo@gmail.com";
     const demoPassword = "12345678";
 
@@ -43,14 +43,14 @@ const Login = () => {
       setIsAuthorized(true);
       setEmail("");
       setPassword("");
-      setRedirect(true); // Set redirect flag to true after successful login
+      setRedirect(true);
     } else {
       toast.error("Invalid credentials");
     }
   };
 
   if (redirect) {
-    return <Navigate to="/" />; // Redirect to home page
+    return <Navigate to="/" />;
   }
 
   return (
@@ -64,9 +64,7 @@ const Login = () => {
         </h3>
         <form onSubmit={handleLogin} className="w-full">
           <div className="mb-4 relative">
-            <label className="block text-sm font-medium mb-2">
-              Email Address
-            </label>
+            <label className="block text-sm font-medium mb-2">Email Address</label>
             <input
               type="email"
               placeholder="Enter your email"
@@ -80,13 +78,24 @@ const Login = () => {
           <div className="mb-6 relative">
             <label className="block text-sm font-medium mb-2">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Enter your Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-800"
             />
-            <RiLock2Fill className="absolute top-1/2 transform -translate-y-1/2 right-4 text-gray-500" />
+            {/* <RiLock2Fill className="absolute top-1/2 transform -translate-y-1/2 right-10 text-gray-500" /> */}
+            {showPassword ? (
+              <RiEyeFill
+                className="absolute top-1/2 transform -translate-y-1/2 right-4 text-gray-500 cursor-pointer"
+                onClick={() => setShowPassword(false)}
+              />
+            ) : (
+              <RiEyeCloseFill
+                className="absolute top-1/2 transform -translate-y-1/2 right-4 text-gray-500 cursor-pointer"
+                onClick={() => setShowPassword(true)}
+              />
+            )}
           </div>
 
           <button
@@ -105,7 +114,7 @@ const Login = () => {
 
           <div className="mt-4 col-span-2 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
+              Don't have an account? {" "}
               <Link
                 to="/register"
                 className="text-green-700 font-semibold cursor-pointer hover:underline"

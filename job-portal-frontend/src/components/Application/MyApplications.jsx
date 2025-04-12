@@ -1,58 +1,88 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import React, { useState } from "react";
+import ResumeModel from "./ResumeModel";
 
-const Home = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-    <h1 className="text-3xl font-bold text-green-800 mb-4">Welcome to the Job Portal for Non-Skilled Workers</h1>
-    <p className="text-gray-600 text-lg mb-6 text-center max-w-md">
-      Find job opportunities easily and apply with just a few clicks.
-    </p>
-    <Link to="/jobs" className="bg-green-800 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition">
-      Browse Jobs
-    </Link>
-  </div>
-);
+const MyApplications = () => {
+  const [ModelOpen, setModelOpen] = useState(false);
+  const [resumeImageUrl, setResumeImageUrl] = useState("");
 
-const Jobs = () => (
-  <div className="min-h-screen bg-gray-100 p-6">
-    <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Available Jobs</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold text-green-800">Construction Worker</h3>
-        <p className="text-gray-600">Location: Colombo</p>
-        <button className="mt-3 bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-          Apply Now
-        </button>
-      </div>
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold text-green-800">Warehouse Helper</h3>
-        <p className="text-gray-600">Location: Kandy</p>
-        <button className="mt-3 bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-          Apply Now
-        </button>
-      </div>
-    </div>
-  </div>
-);
+  const dummyApplications = [
+    {
+      _id: "1",
+      name: "Junoj Siva",
+      email: "junoj@example.com",
+      phone: "1234567890",
+      address: "Jaffna",
+      coverLetter: "I am very interested in this position because...",
+      jobName: "Driver",
+      appliedDate: "2025-02-06",
+      resume: { url: "" },
+    },
+    {
+      _id: "2",
+      name: "Junoj Siva",
+      email: "junoj@example.com",
+      phone: "1234567890",
+      address: "Jaffna",
+      coverLetter: "I have experience in this field and...",
+      jobName: "Waiter",
+      appliedDate: "2025-02-05",
+      resume: { url: "" },
+    },
+  ];
 
-const App = () => {
+  const openModel = (imageUrl) => {
+    setResumeImageUrl(imageUrl);
+    setModelOpen(true);
+  };
+
+  const closeModel = () => setModelOpen(false);
+
   return (
-    <Router>
-      <nav className="bg-green-800 p-4 shadow-lg">
-        <div className="container mx-auto flex justify-between">
-          <Link to="/" className="text-white text-lg font-bold">Job Portal</Link>
-          <div>
-            <Link to="/" className="text-white px-4">Home</Link>
-            <Link to="/jobs" className="text-white px-4">Jobs</Link>
+    <section className="min-h-screen py-16 px-6 bg-gradient-to-r from-green-50 via-green-100 to-green-50 mt-16">
+      <div className="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-2xl">
+        <h1 className="text-4xl font-semibold text-center text-gray-800 mb-10">
+          My Applications
+        </h1>
+
+        {dummyApplications.length === 0 ? (
+          <h4 className="text-center text-gray-500 text-lg">No Applications Found</h4>
+        ) : (
+          <div className="space-y-8">
+            {dummyApplications.map((element) => (
+              <ApplicationCard key={element._id} element={element} openModel={openModel} />
+            ))}
           </div>
-        </div>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/jobs" element={<Jobs />} />
-      </Routes>
-    </Router>
+        )}
+      </div>
+      {ModelOpen && <ResumeModel imageUrl={resumeImageUrl} onClose={closeModel} />}
+    </section>
   );
 };
 
-export default App;
+const ApplicationCard = ({ element, openModel }) => {
+  return (
+    <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col md:flex-row justify-between items-center border border-gray-200 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105">
+      <div className="w-full md:w-3/4 space-y-4">
+        <h2 className="text-2xl font-semibold text-gray-800">{element.jobName}</h2>
+        <p className="text-sm text-gray-500">{element.appliedDate}</p>
+        <div className="space-y-1">
+          <p className="text-gray-700"><span className="font-semibold">Name:</span> {element.name}</p>
+          <p className="text-gray-700"><span className="font-semibold">Email:</span> {element.email}</p>
+          <p className="text-gray-700"><span className="font-semibold">Phone:</span> {element.phone}</p>
+          <p className="text-gray-700"><span className="font-semibold">Address:</span> {element.address}</p>
+        </div>
+        <p className="text-gray-700"><span className="font-semibold">Cover Letter:</span> {element.coverLetter}</p>
+      </div>
+      <div className="w-32 h-32 border-2 border-green-800 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-110">
+        <img
+          src={element.resume.url}
+          alt="Resume"
+          className="object-cover w-full h-full"
+          onClick={() => openModel(element.resume.url)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default MyApplications;

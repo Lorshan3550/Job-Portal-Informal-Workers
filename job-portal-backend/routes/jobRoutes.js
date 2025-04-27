@@ -6,6 +6,7 @@ import {
   getSingleJob,
   postJob,
   updateJob,
+  deleteAllJobs
 } from "../controllers/jobController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
@@ -16,6 +17,7 @@ router.post("/post", isAuthenticated, postJob);
 router.get("/getmyjobs", isAuthenticated, getMyJobs);
 router.put("/update/:id", isAuthenticated, updateJob);
 router.delete("/delete/:id", isAuthenticated, deleteJob);
+router.delete("/deleteall", deleteAllJobs); // Ensure workers cannot access this resource
 router.get("/:id", isAuthenticated, getSingleJob);
 
 export default router;

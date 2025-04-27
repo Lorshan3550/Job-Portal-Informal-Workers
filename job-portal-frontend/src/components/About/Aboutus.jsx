@@ -5,9 +5,8 @@ const AboutUs = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar (Fixed at the top) */}
-      <nav className="bg-green-800 text-white fixed top-0 left-0 w-full z-10 py-4">
-        {/* Navbar content */}
-      </nav>
+      {/* <nav className="bg-green-800 text-white fixed top-0 left-0 w-full z-10 py-4">
+      </nav> */}
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-green-50 via-green-100 to-green-50 text-center pt-16 px-4 mt-16">

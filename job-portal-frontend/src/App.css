@@ -23,4 +23,9 @@
   .placeholder {
     animation: placeholderEffect 9s infinite;
   }
+
+  .input-field {
+    @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:outline-none;
+  }
+  
   

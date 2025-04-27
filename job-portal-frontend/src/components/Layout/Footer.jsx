@@ -47,9 +47,9 @@ function Footer() {
 
   return (
     <footer
-      className={`${
-        isAuthorized ? "block" : "hidden"
-      } bg-green-50 py-8 text-center`}
+      // className={`${
+      //   isAuthorized ? "block" : "hidden"
+      // } bg-green-50 py-8 text-center`}
     >
       {/* Social Media Links */}
       <div className="flex flex-wrap justify-center gap-6 mb-6">

@@ -1,41 +1,31 @@
-import React, { useState } from "react";
-import ResumeModel from "./ResumeModel";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const MyApplications = () => {
-  const [ModelOpen, setModelOpen] = useState(false);
-  const [resumeImageUrl, setResumeImageUrl] = useState("");
+  const [applications, setApplications] = useState([]);
 
-  const dummyApplications = [
-    {
-      _id: "1",
-      name: "Junoj Siva",
-      email: "junoj@example.com",
-      phone: "1234567890",
-      address: "Jaffna",
-      coverLetter: "I am very interested in this position because...",
-      jobName: "Driver",
-      appliedDate: "2025-02-06",
-      resume: { url: "" },
-    },
-    {
-      _id: "2",
-      name: "Junoj Siva",
-      email: "junoj@example.com",
-      phone: "1234567890",
-      address: "Jaffna",
-      coverLetter: "I have experience in this field and...",
-      jobName: "Waiter",
-      appliedDate: "2025-02-05",
-      resume: { url: "" },
-    },
-  ];
+  // Fetch applications from the backend
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:4000/api/v1/application/jobseeker/getall",
+          {
+            withCredentials: true,
+          }
+        );
+        setApplications(data.applications);
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          error.response?.data?.message || "Failed to fetch applications."
+        );
+      }
+    };
 
-  const openModel = (imageUrl) => {
-    setResumeImageUrl(imageUrl);
-    setModelOpen(true);
-  };
-
-  const closeModel = () => setModelOpen(false);
+    fetchApplications();
+  }, []);
 
   return (
     <section className="min-h-screen py-16 px-6 bg-gradient-to-r from-green-50 via-green-100 to-green-50 mt-16">
@@ -44,42 +34,86 @@ const MyApplications = () => {
           My Applications
         </h1>
 
-        {dummyApplications.length === 0 ? (
-          <h4 className="text-center text-gray-500 text-lg">No Applications Found</h4>
+        {applications.length === 0 ? (
+          <h4 className="text-center text-gray-500 text-lg">
+            No Applications Found
+          </h4>
         ) : (
           <div className="space-y-8">
-            {dummyApplications.map((element) => (
-              <ApplicationCard key={element._id} element={element} openModel={openModel} />
+            {applications.map((application) => (
+              <ApplicationCard key={application._id} application={application} />
             ))}
           </div>
         )}
       </div>
-      {ModelOpen && <ResumeModel imageUrl={resumeImageUrl} onClose={closeModel} />}
     </section>
   );
 };
 
-const ApplicationCard = ({ element, openModel }) => {
+const ApplicationCard = ({ application }) => {
   return (
     <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col md:flex-row justify-between items-center border border-gray-200 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105">
       <div className="w-full md:w-3/4 space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-800">{element.jobName}</h2>
-        <p className="text-sm text-gray-500">{element.appliedDate}</p>
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Application for Job ID: {application.jobId}
+        </h2>
+        <p className="text-sm text-gray-500">
+          Applied At: {new Date(application.appliedAt).toLocaleString()}
+        </p>
         <div className="space-y-1">
-          <p className="text-gray-700"><span className="font-semibold">Name:</span> {element.name}</p>
-          <p className="text-gray-700"><span className="font-semibold">Email:</span> {element.email}</p>
-          <p className="text-gray-700"><span className="font-semibold">Phone:</span> {element.phone}</p>
-          <p className="text-gray-700"><span className="font-semibold">Address:</span> {element.address}</p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Name:</span>{" "}
+            {`${application.firstName} ${application.middleName} ${application.lastName}`}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Email:</span> {application.email}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Phone:</span>{" "}
+            {application.phoneNumber}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Address:</span>{" "}
+            {application.location}, {application.city}, {application.district},{" "}
+            {application.province}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Education:</span>{" "}
+            {application.educationQualifications}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Experience:</span>{" "}
+            {application.experience}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Why Apply:</span>{" "}
+            {application.whyApplyJob}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Language Proficiency:</span>{" "}
+            Sinhala: {application.languageProficiency.sinhala}, Tamil:{" "}
+            {application.languageProficiency.tamil}, English:{" "}
+            {application.languageProficiency.english}
+          </p>
         </div>
-        <p className="text-gray-700"><span className="font-semibold">Cover Letter:</span> {element.coverLetter}</p>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-gray-800">Questions:</h3>
+          {application.questions.map((q) => (
+            <p key={q._id} className="text-gray-700">
+              <span className="font-semibold">{q.question}:</span> {q.answer}
+            </p>
+          ))}
+        </div>
       </div>
       <div className="w-32 h-32 border-2 border-green-800 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-110">
-        <img
-          src={element.resume.url}
-          alt="Resume"
-          className="object-cover w-full h-full"
-          onClick={() => openModel(element.resume.url)}
-        />
+        <a
+          href={application.resume.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-green-800 underline"
+        >
+          View Resume
+        </a>
       </div>
     </div>
   );

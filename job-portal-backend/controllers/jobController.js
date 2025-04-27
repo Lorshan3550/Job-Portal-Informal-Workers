@@ -281,6 +281,25 @@ export const deleteJob = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+export const deleteAllJobs = catchAsyncErrors(async (req, res, next) => {
+  // const { role } = req.user;
+
+  // // Ensure workers cannot access this resource
+  // if (role === "JobSeeker") {
+  //   return next(
+  //     new ErrorHandler("JobSeeker not allowed to access this resource.", 400)
+  //   );
+  // }
+
+  // Delete all jobs
+  await Job.deleteMany();
+
+  res.status(200).json({
+    success: true,
+    message: "All jobs have been deleted!",
+  });
+});
+
 export const getSingleJob = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
   try {

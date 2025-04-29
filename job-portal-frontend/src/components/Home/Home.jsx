@@ -208,7 +208,7 @@ const Home = () => {
   // }
   return (
     <>
-      <section className="homePage page pt-16">
+      <section className="homePage page pt-0">
         <HeroSection />
         <HowItWorks />
         <PopularCategories />

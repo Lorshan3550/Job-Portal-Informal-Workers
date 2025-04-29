@@ -72,7 +72,8 @@ export const uploadMultiplePhotos = catchAsyncErrors(async (req, res, next) => {
       message: "Files uploaded successfully!",
       files: results.map((file) => ({
         public_id: file.public_id,
-        url: file.secure_url,
+        url: file.url,
+        secure_url: file.secure_url
       })),
     });
   } catch (err) {

@@ -52,7 +52,7 @@ function Footer() {
       // } bg-green-50 py-8 text-center`}
     >
       {/* Social Media Links */}
-      <div className="flex flex-wrap justify-center gap-6 mb-6">
+      <div className="flex flex-wrap justify-center gap-6  align-content-center">
         <a
           href="https://www.facebook.com" // Link to Facebook
           target="_blank"
@@ -151,7 +151,7 @@ function Footer() {
 
       {/* Footer Note */}
       <div className="bg-green-900 text-white py-6">
-        <p className="text-sm font-semibold">&copy; 2025 JOBSPHERE. All Rights Reserved.</p>
+        <p className="text-sm font-semibold text-center">&copy; 2025 JOBSPHERE. All Rights Reserved.</p>
       </div>
     </footer>
   );

@@ -121,6 +121,11 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
+  // console.log("Province and District Validation Passed");
+
+  // console.log("Before URL Validation");
+
+  // console.log("Photos: ", photos);
 
   // Validate photos
   if (photos && photos.some((photo) => !photo.url.startsWith("http") || !photo.secure_url.startsWith("https"))) {
@@ -128,6 +133,8 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
       new ErrorHandler("All photos must be valid URLs starting with http or https.", 400)
     );
   }
+
+  console.log("After URL Validation");
 
   // Validate workType
   if (!workTypes.includes(workType)) {
@@ -138,6 +145,11 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
   if (!jobExperience.includes(experience)) {
     return next(new ErrorHandler("Invalid experience.", 400));
   }
+
+  if (!req.user || !req.user._id) {
+    return next(new ErrorHandler("User authentication error. Please login again.", 400));
+  }
+  
 
   // Create the job document
   const job = await Job.create({

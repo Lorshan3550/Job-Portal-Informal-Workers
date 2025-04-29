@@ -192,6 +192,11 @@ jobSchema.pre("save", function (next) {
 
 // Pre-save validation: Ensure jobs are not posted by users with the 'JobSeeker' role
 jobSchema.pre("save", async function (next) {
+
+  if (!this.postedBy) {
+    return next(new ErrorHandler("PostedBy field missing in the job document.", 400));
+  }
+  
   const user = await User.findById(this.postedBy);
 
   if (!user) {

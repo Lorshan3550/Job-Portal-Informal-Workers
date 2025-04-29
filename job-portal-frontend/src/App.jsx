@@ -84,7 +84,7 @@
 
 import React, { useContext, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Context } from "./main";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
@@ -106,6 +106,13 @@ import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 import VerifyCode from "./components/Auth/VerifyCode";
 import Profile from "./components/Auth/Profile";
+import ClientApplications from "./components/Application/ClientApplications";
+import AdminLogin from "./components/Admin/AdminLogin";
+import AdminDashboard from "./components/Admin/AdminDashboard";
+import ManageJobs from "./components/Admin/ManageJobs";
+import ManageApplications from "./components/Admin/ManageApplications";
+import ManageUsers from "./components/Admin/ManageUsers";
+import AdminHome from "./components/Admin/AdminHome";
 
 const App = () => {
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
@@ -126,11 +133,23 @@ const App = () => {
     fetchUser();
   }, [isAuthorized]);
 
+  // Define routes where Navbar and Footer should be hidden
+  const hideHeaderFooter = ["/login", "/register", "/admin/*"].includes(location.pathname);
+
   return (
     <BrowserRouter>
-      <Navbar />
+      {/* <Navbar /> */}
+      {!hideHeaderFooter && <Navbar />}
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />}>
+          <Route index element={<AdminHome />} /> {/* Default content for /admin/dashboard */}
+          <Route path="manage-jobs" element={<ManageJobs />} />
+          <Route path="manage-applications" element={<ManageApplications />} />
+          <Route path="manage-users" element={<ManageUsers />} />
+        </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -144,9 +163,11 @@ const App = () => {
         <Route path="/job/me" element={<MyJobs />} />
         <Route path="/application/:id" element={<Application />} />
         <Route path="/applications/me" element={<MyApplications />} />
+        <Route path="/applications/client" element={<ClientApplications />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
+      {!hideHeaderFooter && <Footer />}
       <Toaster />
     </BrowserRouter>
   );

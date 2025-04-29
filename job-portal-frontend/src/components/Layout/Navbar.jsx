@@ -244,11 +244,32 @@ const Navbar = () => {
               ALL JOBS
             </Link>
           </li>
-          <li>
+
+          {/* <li>
             <Link to="/applications/me" onClick={() => setShow(false)}>
               {user?.role === "Client" ? "APPLICANT'S APPLICATIONS" : "MY APPLICATIONS"}
             </Link>
-          </li>
+          </li> */}
+
+          {user?.role === "Client" && (
+            <li>
+              <Link to="/applications/client" onClick={() => setShow(false)}>
+                APPLICANT&apos;S APPLICATIONS
+              </Link>
+            </li>
+          )}
+
+          {user?.role === "JobSeeker" && (
+            <li>
+              <Link to="/applications/me" onClick={() => setShow(false)}>
+                MY APPLICATIONS
+              </Link>
+            </li>
+          )}
+
+
+
+
           {user?.role === "Client" && (
             <>
               <li>
@@ -263,11 +284,16 @@ const Navbar = () => {
               </li>
             </>
           )}
-          <li>
-            <Link to="/profile" onClick={() => setShow(false)}>
-              PROFILE
-            </Link>
-          </li>
+
+          {user?.role === "Client" || user?.role === "JobSeeker" && (
+            <li>
+              <Link to="/profile" onClick={() => setShow(false)}>
+                PROFILE
+              </Link>
+            </li>
+          )}
+
+
 
           {/* <li>
             <button onClick={handleLogout} className="bg-white text-green-900 px-4 py-2 rounded-lg">

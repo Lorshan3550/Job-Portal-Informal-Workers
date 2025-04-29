@@ -9,7 +9,7 @@ const AboutUs = () => {
       </nav> */}
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-green-50 via-green-100 to-green-50 text-center pt-16 px-4 mt-16">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-green-50 via-green-100 to-green-50 text-center pt-16 px-4 mt-0">
         <div className="space-y-8 max-w-5xl mx-auto">
           {/* About Us Heading */}
           <section className="mb-8">

@@ -421,3 +421,48 @@ export const updateApplication = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+
+export const updateApplicationStatus = catchAsyncErrors(async (req, res, next) => {
+  const { role, _id: clientId } = req.user; // Extract client ID and role
+  const { applicationId } = req.params; // Extract application ID from request parameters
+  const { status } = req.body; // Extract the new status from the request body
+
+  // Ensure the user is not a JobSeeker
+  if (role === "JobSeeker") {
+    return next(
+      new ErrorHandler("JobSeeker not allowed to access this resource.", 403)
+    );
+  }
+
+  // Validate the status value
+  if (!["Pending", "Accepted", "Rejected"].includes(status)) {
+    return next(
+      new ErrorHandler("Invalid status. Allowed values are 'Pending', 'Accepted', or 'Rejected'.", 400)
+    );
+  }
+
+  // Find the application
+  const application = await Application.findById(applicationId).populate("jobId");
+  if (!application) {
+    return next(new ErrorHandler("Application not found.", 404));
+  }
+
+  // Ensure the client owns the job associated with the application
+  const job = application.jobId;
+  if (!job || job.postedBy.toString() !== clientId.toString()) {
+    return next(new ErrorHandler("You are not authorized to update this application.", 403));
+  }
+
+  // Update the application status
+  application.status = status;
+  await application.save();
+
+  res.status(200).json({
+    success: true,
+    message: `Application status updated to '${status}' successfully!`,
+    application,
+  });
+});
+
+
+

@@ -362,7 +362,7 @@ const Jobs = () => {
     const fetchJobs = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/v1/job/getall",
+          "http://localhost:4000/api/v1/job/getallapprovedjobs",
           { withCredentials: true }
         );
         setJobs(data.jobs);

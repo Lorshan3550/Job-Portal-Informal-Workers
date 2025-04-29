@@ -6,13 +6,69 @@ import validator from "validator";
 
 // Get All Jobs - 
 export const getAllJobs = catchAsyncErrors(async (req, res, next) => {
-  const jobs = await Job.find({ expired: false });
+  // const jobs = await Job.find({ expired: false });
+  const now = new Date();
+
+  const jobs = await Job.find({
+    $or: [
+      { expired: false },
+      { permanentRejection: false }, // Jobs not marked as permanently rejected
+
+      {
+        rejectionCorrectionDeadline: { $gte: now }, // Deadline has not passed
+        adminApproval: false, // Not approved by admin 
+      },
+    ],
+  });
   res.status(200).json({
     success: true,
     noOfJobs : jobs.length ,
     jobs,
   });
 });
+
+export const getAllJobsWithRejectionLogic = catchAsyncErrors(async (req, res, next) => {
+  const now = new Date();
+
+  // Query to include permanent rejection logic
+  const jobs = await Job.find({
+    $or: [
+      { permanentRejection: true }, // Jobs already marked as permanently rejected
+      {
+        rejectionCorrectionDeadline: { $lte: now }, // Deadline has passed
+        adminApproval: false, // Not approved by admin
+      },
+    ],
+  });
+
+  res.status(200).json({
+    success: true,
+    noOfJobs: jobs.length,
+    jobs,
+  });
+});
+
+// Get All Jobs - AdminApproved
+export const getApprovedJobs = catchAsyncErrors(async (req, res, next) => {
+  const jobs = await Job.find({ expired: false, adminApproval: true });
+  res.status(200).json({
+    success: true,
+    noOfJobs: jobs.length,
+    jobs,
+  });
+});
+
+// Get All Jobs - NotAdminApproved
+export const getNonApprovedJobs = catchAsyncErrors(async (req, res, next) => {
+  const jobs = await Job.find({ expired: false,  adminApproval: false  });
+  res.status(200).json({
+    success: true,
+    noOfJobs: jobs.length,
+    jobs,
+  });
+});
+
+
 
 // Post a Job 
 export const postJob = catchAsyncErrors(async (req, res, next) => {
@@ -271,6 +327,74 @@ export const updateJob = catchAsyncErrors(async (req, res, next) => {
     success: true,
     message: "Job Updated!",
     job
+  });
+});
+
+// export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
+//   const { id } = req.params; // Job ID from the request parameters
+//   const { adminApproval } = req.body; // New admin approval status from the request body
+
+//   // Ensure the request is made by an admin
+//   if (!req.admin) {
+//     return next(new ErrorHandler("Only admins can update job approval status.", 403));
+//   }
+
+//   // Validate the adminApproval field
+//   if (typeof adminApproval !== "boolean") {
+//     return next(new ErrorHandler("Invalid value for adminApproval. It must be true or false.", 400));
+//   }
+
+//   // Find the job by ID
+//   const job = await Job.findById(id);
+//   if (!job) {
+//     return next(new ErrorHandler("Job not found.", 404));
+//   }
+
+//   // Update the adminApproval field
+//   job.adminApproval = adminApproval;
+//   await job.save();
+
+//   res.status(200).json({
+//     success: true,
+//     message: `Job approval status updated to ${adminApproval ? "approved" : "not approved"}.`,
+//     job,
+//   });
+// });
+
+export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params; // Job ID from the request parameters
+  const { adminApproval, reasonForRejection } = req.body; // New admin approval status and reason for rejection
+
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can update job approval status.", 403));
+  }
+
+  // Validate the adminApproval field
+  if (typeof adminApproval !== "boolean") {
+    return next(new ErrorHandler("Invalid value for adminApproval. It must be true or false.", 400));
+  }
+
+  // Find the job by ID
+  const job = await Job.findById(id);
+  if (!job) {
+    return next(new ErrorHandler("Job not found.", 404));
+  }
+
+  // If adminApproval is false, validate the reasonForRejection field
+  if (!adminApproval && (!reasonForRejection || reasonForRejection.trim() === "")) {
+    return next(new ErrorHandler("Reason for rejection is required when adminApproval is false.", 400));
+  }
+
+  // Update the adminApproval and reasonForRejection fields
+  job.adminApproval = adminApproval;
+  job.reasonForRejection = adminApproval ? null : reasonForRejection; // Clear reason if approved
+  await job.save();
+
+  res.status(200).json({
+    success: true,
+    message: `Job approval status updated to ${adminApproval ? "approved" : "not approved"}.`,
+    job,
   });
 });
 

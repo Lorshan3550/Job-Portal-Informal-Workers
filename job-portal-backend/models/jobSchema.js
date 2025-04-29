@@ -147,6 +147,27 @@ const jobSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  adminApproval: {
+    type: Boolean,
+    default: false,
+    required: false,
+  },
+  reasonForRejection: {
+    type: String,
+    required: false,
+  },
+  modifyRejection: {
+    type: String,
+    required: false,
+  },
+  rejectionCorrectionDeadline: {
+    type: Date,
+    required: false,
+  },
+  permanentRejection:{
+    type: Boolean,
+    default: false,
+  },
   jobPostedOn: {
     type: Date,
     default: Date.now,
@@ -185,6 +206,12 @@ jobSchema.pre("save", function (next) {
 
   if (days === 0 && months === 0 && years === 0) {
     return next(new ErrorHandler("Duration must have at least one value greater than 0.", 400));
+  }
+
+  if (this.adminApproval === false && this.reasonForRejection) {
+    this.rejectionCorrectionDeadline = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000); // Add 10 days
+  } else {
+    this.rejectionCorrectionDeadline = null; // Clear the deadline if the job is approved
   }
 
   next();

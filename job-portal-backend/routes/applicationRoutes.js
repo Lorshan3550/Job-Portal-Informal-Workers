@@ -5,7 +5,8 @@ import {
   jobseekerGetAllApplications,
   postApplication,
   updateApplication,
-  updateApplicationStatus
+  updateApplicationStatus,
+  getAllApplicationsCategorizedByJobForAdmin
 } from "../controllers/applicationController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
@@ -19,6 +20,8 @@ router.put("/update-status/:applicationId", isAuthenticated, updateApplicationSt
 
 router.get("/client/getall", isAuthenticated, clientGetAllApplications);
 router.get("/jobseeker/getall", isAuthenticated, jobseekerGetAllApplications);
+router.get("/admin/get-categorized-applications", isAuthenticated, getAllApplicationsCategorizedByJobForAdmin);
+
 router.delete("/delete/:applicationId", isAuthenticated, jobseekerDeleteApplication);
 
 

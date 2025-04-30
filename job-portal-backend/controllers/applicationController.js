@@ -466,3 +466,45 @@ export const updateApplicationStatus = catchAsyncErrors(async (req, res, next) =
 
 
 
+// Get all applications categorized by job for admin
+export const getAllApplicationsCategorizedByJobForAdmin = catchAsyncErrors(async (req, res, next) => {
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can access this resource.", 403));
+  }
+
+  // Retrieve all jobs
+  const jobs = await Job.find({adminApproval: true});
+
+  if (!jobs.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No jobs found.",
+    });
+  }
+
+  // Retrieve all applications and populate jobId and workerId
+  const applications = await Application.find()
+    .populate("jobId", "title category province district city") // Populate job details
+    .populate("workerId", "firstName lastName email phone gender"); // Populate worker details
+
+  // Categorize applications by jobId
+  const categorizedApplications = jobs.map((job) => {
+    const jobApplications = applications.filter(
+      (application) => application.jobId && application.jobId._id.toString() === job._id.toString()
+    );
+    return {
+      jobId: job._id,
+      jobTitle: job.title,
+      applications: jobApplications, // Include all application details
+    };
+  });
+
+  res.status(200).json({
+    success: true,
+    count: applications.length,
+    categorizedApplications,
+  });
+});
+
+

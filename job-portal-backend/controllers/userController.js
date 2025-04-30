@@ -5,6 +5,8 @@ import { sendToken } from "../utils/jwtToken.js";
 import ErrorHandler from "../middlewares/error.js";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import { sriLankaProvinces } from "../utils/commonVariables.js";
+import { Job } from "../models/jobSchema.js";
+import { Application } from "../models/applicationSchema.js";
 
 // User - Worker or Client
 
@@ -157,7 +159,7 @@ export const getUser = catchAsyncErrors((req, res, next) => {
   });
 });
 
-// Update User Password
+// Update User Password - Client / JobSeeker
 export const updatePassword = catchAsyncErrors(async (req, res, next) => {
   const { oldPassword, newPassword, confirmNewPassword } = req.body;
 
@@ -193,7 +195,7 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Update User Email
+// Update User Email - Client / JobSeeker
 export const updateEmail = catchAsyncErrors(async (req, res, next) => {
   const { email } = req.body;
   const userId = req.user._id;
@@ -276,3 +278,139 @@ export const allUsers = catchAsyncErrors(async (req, res, next) => {
     users
   });
 })
+
+// Get all users by role
+export const getUsersCategorizedByRole = catchAsyncErrors(async (req, res, next) => {
+  // Retrieve all users
+  const users = await User.find();
+
+  if (!users.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No users found.",
+    });
+  }
+
+  // Categorize users by role
+  const categorizedUsers = {
+    clients: users.filter((user) => user.role === "Client"),
+    jobSeekers: users.filter((user) => user.role === "JobSeeker"),
+  };
+
+  res.status(200).json({
+    success: true,
+    count: users.length,
+    categorizedUsers,
+  });
+});
+
+// Reset User Password by Admin
+export const resetUserPasswordByAdmin = catchAsyncErrors(async (req, res, next) => {
+  const { userId } = req.params; // Extract user ID from request parameters
+  const { dummyPassword } = req.body; // Extract the dummy password from the request body
+
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can reset user passwords.", 403));
+  }
+
+  // Validate the dummy password
+  if (!dummyPassword || dummyPassword.length < 8) {
+    return next(new ErrorHandler("Please provide a valid dummy password with at least 8 characters.", 400));
+  }
+
+  // Find the user by ID
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
+
+  // Update the user's password
+  user.password = dummyPassword;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "User password has been reset successfully.",
+  });
+});
+
+// Hard Delete User - Admin
+export const hardDeleteUser = catchAsyncErrors(async (req, res, next) => {
+  const { userId } = req.params; // Extract user ID from request parameters
+
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can delete users.", 403));
+  }
+
+  // Find the user by ID
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
+
+  // Check and delete related data based on the user's role
+  if (user.role === "Client") {
+    // Check if the client has posted any jobs
+    const jobs = await Job.find({ postedBy: userId });
+    if (jobs.length > 0) {
+      // Delete all jobs posted by the client
+      await Job.deleteMany({ postedBy: userId });
+    }
+  } else if (user.role === "JobSeeker") {
+    // Check if the job seeker has submitted any applications
+    const applications = await Application.find({ workerId: userId });
+    if (applications.length > 0) {
+      // Delete all applications submitted by the job seeker
+      await Application.deleteMany({ workerId: userId });
+    }
+  }
+
+  // Hard delete the user
+  await user.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "User and related data have been deleted successfully.",
+  });
+});
+
+// Update User Email by Admin
+export const updateUserEmailByAdmin = catchAsyncErrors(async (req, res, next) => {
+  const { userId } = req.params; // Extract user ID from request parameters
+  const { email } = req.body; // Extract the new email from the request body
+
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can update user emails.", 403));
+  }
+
+  // Validate the email
+  if (!email || !validator.isEmail(email)) {
+    return next(new ErrorHandler("Please provide a valid email address.", 400));
+  }
+
+  // Check if the email is already registered
+  const existingUser = await User.findOne({ email });
+  if (existingUser && existingUser._id.toString() !== userId.toString()) {
+    return next(new ErrorHandler("This email is already registered with another account.", 400));
+  }
+
+  // Find the user by ID
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
+
+  // Update the user's email
+  user.email = email;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "User email has been updated successfully.",
+    user,
+  });
+});
+

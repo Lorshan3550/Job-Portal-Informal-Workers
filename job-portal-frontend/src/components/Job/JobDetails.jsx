@@ -206,10 +206,10 @@ const JobDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthorized) {
-      navigateTo("/login");
-      return;
-    }
+    // if (!isAuthorized) {
+    //   navigateTo("/login");
+    //   return;
+    // }
 
     const fetchJobDetails = async () => {
       try {
@@ -297,15 +297,24 @@ const JobDetails = () => {
             </p>
           </div>
 
-          {user && user.role === "Employer" ? (
-            <></>
-          ) : (
+          {user?.role === "JobSeeker" && (
             <div className="text-center mt-8">
               <Link
                 to={`/application/${job._id}`}
                 className="inline-block bg-green-800 text-white py-3 px-8 rounded-full text-lg hover:bg-green-900 transition duration-300 transform hover:scale-105"
               >
-                Apply Now ${job._id}
+                Apply Now
+              </Link>
+            </div>
+          )}
+
+          {!isAuthorized && (
+            <div className="text-center mt-8">
+              <Link
+                to={`/login`}
+                className="inline-block bg-green-800 text-white py-3 px-8 rounded-full text-lg hover:bg-green-900 transition duration-300 transform hover:scale-105"
+              >
+                Login OR Register to Apply Now
               </Link>
             </div>
           )}

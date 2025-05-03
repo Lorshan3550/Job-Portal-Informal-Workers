@@ -15,6 +15,9 @@ const AdminDashboard = () => {
       <div className="flex">
         {/* Sidebar */}
         <aside className="w-64 bg-gray-800 text-white min-h-screen p-6">
+          <div className="flex items-center justify-center mb-6">
+            <img src="/public/logo.png" alt="Logo" className="bg-white h-25 w-25" />
+          </div>
           <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
           <nav className="space-y-4">
             <Link

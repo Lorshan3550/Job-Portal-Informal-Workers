@@ -31,7 +31,7 @@ const HeroSection = () => {
   return (
     <div className="bg-gradient-to-r from-green-50 via-green-100 to-green-50 py-12">
       <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between">
-        <div className="text-center md:text-left md:w-1/2">
+        <div className="text-center md:text-left md:w-1/2 mt-16">
           <h1 className="text-4xl font-bold text-gray-900 leading-tight">
             Find a job that suits
           </h1>

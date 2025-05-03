@@ -1,5 +1,5 @@
 import express from "express";
-import { registerAdmin, loginAdmin, updateAdmin, logout, updateAdminApproval } from "../controllers/adminController.js";
+import { registerAdmin, loginAdmin, updateAdmin, logout, updateAdminApproval, getDashboardStats } from "../controllers/adminController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 import { hardDeleteUser, resetUserPasswordByAdmin, updateUserEmailByAdmin } from "../controllers/userController.js";
 
@@ -17,6 +17,7 @@ router.put("/update-approval/:id", isAuthenticated, updateAdminApproval);
 
 
 router.get("/logout", isAuthenticated, logout);
+router.get("/dashboard-stats", isAuthenticated, getDashboardStats);
 // router.get("/getuser", isAuthenticated, getUser);
 
 export default router;

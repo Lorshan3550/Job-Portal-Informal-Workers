@@ -6,6 +6,7 @@ const reviewSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     auto: true 
   },
+
   jobId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Job', 
@@ -16,7 +17,7 @@ const reviewSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 
     required: true 
-  }, // Reference to User (Reviewer) - Client
+  }, // Reference to User (Reviewer) - Client/JobSeeker
 
   revieweeId: { 
     type: mongoose.Schema.Types.ObjectId, 
@@ -33,8 +34,8 @@ const reviewSchema = new mongoose.Schema({
 
   completedWork: { 
     type: Boolean, 
-    required: true 
-  }, // Indicates if the work was completed
+    required: false 
+  }, // Indicates if the work was completed - JobSeeker to Client
 
   comments: { 
     type: String, 
@@ -52,7 +53,14 @@ const reviewSchema = new mongoose.Schema({
     min: 1,
     max: 5,
     required: false,
-  }, // Specific rating for the quality of work (optional)
+  }, // Specific rating for the quality of work (optional) JobSeeker to Client
+
+  workPlaceQuality: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: false,
+  }, // Specific rating for the quality of work (optional) Client to JobSeeker
 
   professionalism: {
     type: Number,
@@ -67,11 +75,6 @@ const reviewSchema = new mongoose.Schema({
     max: 5,
     required: false,
   }, // Specific rating for communication (optional)
-
-  complaint : {
-    type : String,
-    required : false
-  },
 
   flagged: {
     type: Boolean,
@@ -115,6 +118,12 @@ const reviewSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   }, // Indicates if the review is anonymous
+
+  adminApproval: {
+    type: String,
+    enum: ['Pending', 'Rejected', 'Approved'],
+    default: 'Pending',
+  }, // Status of admin approval for the review
 
   type: {
     type: String,

@@ -32,7 +32,7 @@ router.put("/update-approval/:id", isAuthenticated, updateAdminApproval);
 
 router.delete("/delete/:id", isAuthenticated, deleteJob);
 router.delete("/deleteall", deleteAllJobs); // Ensure workers cannot access this resource
-router.get("/:id", isAuthenticated, getSingleJob);
+router.get("/:id", getSingleJob);
 
 export default router;
 

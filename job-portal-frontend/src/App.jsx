@@ -113,6 +113,9 @@ import ManageJobs from "./components/Admin/ManageJobs";
 import ManageApplications from "./components/Admin/ManageApplications";
 import ManageUsers from "./components/Admin/ManageUsers";
 import AdminHome from "./components/Admin/AdminHome";
+import PostReview from "./components/Review/PostReview";
+import UpdateReview from "./components/Review/UpdateReview";
+import MyReview from "./components/Review/MyReview";
 
 const App = () => {
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
@@ -133,8 +136,17 @@ const App = () => {
     fetchUser();
   }, [isAuthorized]);
 
+  // // Define routes where Navbar and Footer should be hidden
+  // const hideHeaderFooter = ["/login", "/register", "/admin/*"].includes(location.pathname);
+
   // Define routes where Navbar and Footer should be hidden
-  const hideHeaderFooter = ["/login", "/register", "/admin/*"].includes(location.pathname);
+  const hideHeaderFooter =
+    location.pathname.startsWith("/admin/") ||
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    location.pathname === "/forgot-password" ||
+    location.pathname === "/reset-password" ||
+    location.pathname === "/verifycode";
 
   return (
     <BrowserRouter>
@@ -164,6 +176,10 @@ const App = () => {
         <Route path="/application/:id" element={<Application />} />
         <Route path="/applications/me" element={<MyApplications />} />
         <Route path="/applications/client" element={<ClientApplications />} />
+        <Route path="/review" element={<MyReview />} />
+        <Route path="/review/post" element={<PostReview/>} />
+        <Route path="/review/update/:reviewId" element={<UpdateReview />} />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       {/* <Footer /> */}

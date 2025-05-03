@@ -287,3 +287,69 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
   });
   
 
+// export const getDashboardStats = catchAsyncErrors(async (req, res, next) => {
+//     // Ensure the request is made by an admin
+//     if (!req.admin) {
+//       return next(new ErrorHandler("Only admins can access this resource.", 403));
+//     }
+  
+//     // Fetch counts from the database
+//     const totalUsers = await User.countDocuments();
+//     const totalJobs = await Job.countDocuments();
+//     const totalApplications = await Application.countDocuments();
+  
+//     res.status(200).json({
+//       success: true,
+//       stats: {
+//         totalUsers,
+//         totalJobs,
+//         totalApplications,
+//       },
+//     });
+//   });
+
+
+export const getDashboardStats = catchAsyncErrors(async (req, res, next) => {
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can access this resource.", 403));
+  }
+
+  // Fetch counts from the database
+  const totalUsers = await User.countDocuments();
+  const totalJobs = await Job.countDocuments();
+  const totalApplications = await Application.countDocuments();
+
+  // Additional stats
+  const activeJobs = await Job.countDocuments({ status: "Open" });
+  const closedJobs = await Job.countDocuments({ status: "Closed" });
+  const pendingApplications = await Application.countDocuments({ status: "Pending" });
+  const nonApprovedJobs = await Job.countDocuments({ adminApproval: false });
+
+  // Recent activity
+  const recentJobs = await Job.find().sort({ createdAt: -1 }).limit(5).select("title createdAt");
+  const recentApplications = await Application.find()
+    .sort({ appliedAt: -1 })
+    .limit(5)
+    .populate("jobId", "title")
+    .select("firstName lastName appliedAt");
+  const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5).select("firstName lastName createdAt");
+
+  res.status(200).json({
+    success: true,
+    stats: {
+      totalUsers,
+      totalJobs,
+      totalApplications,
+      activeJobs,
+      closedJobs,
+      pendingApplications,
+      nonApprovedJobs,
+    },
+    recentActivity: {
+      jobs: recentJobs,
+      applications: recentApplications,
+      users: recentUsers,
+    },
+  });
+});

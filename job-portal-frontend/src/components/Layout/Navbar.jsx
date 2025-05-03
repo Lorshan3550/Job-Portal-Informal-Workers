@@ -186,6 +186,164 @@
 // export default Navbar;
 
 
+// import React, { useContext, useState } from "react";
+// import { Context } from "../../main";
+// import { Link, useNavigate } from "react-router-dom";
+// import axios from "axios";
+// import toast from "react-hot-toast";
+// import { GiHamburgerMenu } from "react-icons/gi";
+// import { AiOutlineClose } from "react-icons/ai";
+
+// const Navbar = () => {
+//   const [show, setShow] = useState(false);
+//   const { isAuthorized, setIsAuthorized, user } = useContext(Context);
+//   const navigateTo = useNavigate();
+
+//   // http://localhost:4000/api/v1/user
+
+//   const handleLogout = async () => {
+//     try {
+//       const response = await axios.get("http://localhost:4000/api/v1/user/logout", {
+//         withCredentials: true,
+//       });
+//       console.log("Logout response:", response.data);
+//       toast.success(response.data.message);
+//       localStorage.removeItem("token");
+//       setIsAuthorized(false);
+//       navigateTo("/login");
+//     } catch (error) {
+//       console.error("Logout error:", error);
+//       toast.error(error.response?.data?.message || "Logout failed");
+//       setIsAuthorized(true);
+//     }
+//   };
+
+//   return (
+//     <nav className={isAuthorized ? "navbarShow" : "navbarHide"}>
+//       <div className="container flex items-center justify-between px-6 py-4 bg-green-900 text-white">
+//         {/* Logo */}
+//         <div className="logo flex items-center space-x-2">
+//           <img src="/logo.png" alt="logo" className="h-10" />
+//           <span className="text-xl font-bold tracking-wide">JOBSPHERE</span>
+//         </div>
+
+//         {/* Navigation Menu */}
+//         <ul className={`menu flex-col md:flex-row md:flex gap-6 ${show ? "flex" : "hidden"} md:gap-8`}>
+//           <li>
+//             <Link to="/" onClick={() => setShow(false)}>
+//               HOME
+//             </Link>
+//           </li>
+//           <li>
+//             <Link to="/aboutus" onClick={() => setShow(false)}>
+//               ABOUT US
+//             </Link>
+//           </li>
+//           <li>
+//             <Link to="/job/getall" onClick={() => setShow(false)}>
+//               ALL JOBS
+//             </Link>
+//           </li>
+
+//           {/* <li>
+//             <Link to="/applications/me" onClick={() => setShow(false)}>
+//               {user?.role === "Client" ? "APPLICANT'S APPLICATIONS" : "MY APPLICATIONS"}
+//             </Link>
+//           </li> */}
+
+//           {user?.role === "Client" && (
+//             <li>
+//               <Link to="/applications/client" onClick={() => setShow(false)}>
+//                 APPLICANT&apos;S APPLICATIONS
+//               </Link>
+//             </li>
+//           )}
+
+//           {user?.role === "JobSeeker" && (
+//             <li>
+//               <Link to="/applications/me" onClick={() => setShow(false)}>
+//                 MY APPLICATIONS
+//               </Link>
+//             </li>
+//           )}
+
+
+
+
+//           {user?.role === "Client" && (
+//             <>
+//               <li>
+//                 <Link to="/job/post" onClick={() => setShow(false)}>
+//                   POST NEW JOB
+//                 </Link>
+//               </li>
+//               <li>
+//                 <Link to="/job/me" onClick={() => setShow(false)}>
+//                   VIEW YOUR JOBS
+//                 </Link>
+//               </li>
+//             </>
+//           )}
+
+//           {user?.role === "Client" || user?.role === "JobSeeker" && (
+//             <li>
+//               <Link to="/profile" onClick={() => setShow(false)}>
+//                 PROFILE
+//               </Link>
+//             </li>
+//           )}
+
+
+
+//           {/* <li>
+//             <button onClick={handleLogout} className="bg-white text-green-900 px-4 py-2 rounded-lg">
+//               LOGOUT
+//             </button>
+//           </li>
+
+//           <li>
+//             <Link to="/login" onClick={() => setShow(false)}>
+//               <button className="bg-white text-green-900 px-4 py-2 rounded-lg">
+//                 LOGIN
+//               </button>
+//             </Link>
+//           </li> */}
+
+//           {/* Auth Buttons */}
+//           {isAuthorized ? (
+//             <li>
+//               <button
+//                 onClick={handleLogout}
+//                 className="bg-white text-green-900 px-4 py-2 rounded-lg cursor-pointer hover:bg-green-200 transition duration-300"
+//               >
+//                 LOGOUT
+//               </button>
+//             </li>
+//           ) : (
+//             <li>
+//               <Link to="/login" onClick={() => setShow(false)}>
+//                 <button className="bg-white text-green-900 px-4 py-2 rounded-lg cursor-pointer hover:bg-green-200 transition duration-300">
+//                   LOGIN
+//                 </button>
+//               </Link>
+//             </li>
+//           )}
+
+
+//         </ul>
+
+//         {/* Hamburger Icon */}
+//         <div className="hamburger md:hidden" onClick={() => setShow(!show)}>
+//           {show ? <AiOutlineClose size={24} /> : <GiHamburgerMenu size={24} />}
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// export default Navbar;
+
+
 import React, { useContext, useState } from "react";
 import { Context } from "../../main";
 import { Link, useNavigate } from "react-router-dom";
@@ -199,143 +357,161 @@ const Navbar = () => {
   const { isAuthorized, setIsAuthorized, user } = useContext(Context);
   const navigateTo = useNavigate();
 
-  // http://localhost:4000/api/v1/user
-
   const handleLogout = async () => {
     try {
       const response = await axios.get("http://localhost:4000/api/v1/user/logout", {
         withCredentials: true,
       });
-      console.log("Logout response:", response.data);
       toast.success(response.data.message);
       localStorage.removeItem("token");
       setIsAuthorized(false);
       navigateTo("/login");
     } catch (error) {
-      console.error("Logout error:", error);
       toast.error(error.response?.data?.message || "Logout failed");
       setIsAuthorized(true);
     }
   };
 
   return (
-    <nav className={isAuthorized ? "navbarShow" : "navbarHide"}>
-      <div className="container flex items-center justify-between px-6 py-4 bg-green-900 text-white">
+    <nav className="bg-green-900 text-white shadow-lg fixed top-0 left-0 w-full z-50">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <div className="logo flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <img src="/logo.png" alt="logo" className="h-10" />
           <span className="text-xl font-bold tracking-wide">JOBSPHERE</span>
         </div>
 
+        {/* Hamburger Icon */}
+        <div className="md:hidden" onClick={() => setShow(!show)}>
+          {show ? <AiOutlineClose size={24} /> : <GiHamburgerMenu size={24} />}
+        </div>
+
         {/* Navigation Menu */}
-        <ul className={`menu flex-col md:flex-row md:flex gap-6 ${show ? "flex" : "hidden"} md:gap-8`}>
+        <ul
+          className={`absolute md:static top-16 left-0 w-full md:w-auto bg-green-900 md:bg-transparent flex flex-col md:flex-row items-center md:space-x-8 transition-all duration-300 ${show ? "block" : "hidden md:flex"
+            }`}
+        >
           <li>
-            <Link to="/" onClick={() => setShow(false)}>
+            <Link
+              to="/"
+              onClick={() => setShow(false)}
+              className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+            >
               HOME
             </Link>
           </li>
           <li>
-            <Link to="/aboutus" onClick={() => setShow(false)}>
+            <Link
+              to="/aboutus"
+              onClick={() => setShow(false)}
+              className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+            >
               ABOUT US
             </Link>
           </li>
           <li>
-            <Link to="/job/getall" onClick={() => setShow(false)}>
+            <Link
+              to="/job/getall"
+              onClick={() => setShow(false)}
+              className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+            >
               ALL JOBS
             </Link>
           </li>
 
-          {/* <li>
-            <Link to="/applications/me" onClick={() => setShow(false)}>
-              {user?.role === "Client" ? "APPLICANT'S APPLICATIONS" : "MY APPLICATIONS"}
-            </Link>
-          </li> */}
-
-          {user?.role === "Client" && (
-            <li>
-              <Link to="/applications/client" onClick={() => setShow(false)}>
-                APPLICANT&apos;S APPLICATIONS
-              </Link>
-            </li>
-          )}
-
-          {user?.role === "JobSeeker" && (
-            <li>
-              <Link to="/applications/me" onClick={() => setShow(false)}>
-                MY APPLICATIONS
-              </Link>
-            </li>
-          )}
-
-
-
-
-          {user?.role === "Client" && (
+          {(user?.role === 'Client' || user?.role === 'JobSeeker') && (
             <>
               <li>
-                <Link to="/job/post" onClick={() => setShow(false)}>
-                  POST NEW JOB
-                </Link>
-              </li>
-              <li>
-                <Link to="/job/me" onClick={() => setShow(false)}>
-                  VIEW YOUR JOBS
+                <Link
+                  to="/review"
+                  onClick={() => setShow(false)}
+                  className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+                >
+                  MY REVIEWS
                 </Link>
               </li>
             </>
           )}
 
-          {user?.role === "Client" || user?.role === "JobSeeker" && (
+          {user?.role === "Client" && (
+            <>
+              <li>
+                <Link
+                  to="/job/post"
+                  onClick={() => setShow(false)}
+                  className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+                >
+                  POST NEW JOB
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/applications/client"
+                  onClick={() => setShow(false)}
+                  className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+                >
+                  VIEW YOUR APPLICATIONS
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/job/me"
+                  onClick={() => setShow(false)}
+                  className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+                >
+                  VIEW YOUR JOBS
+                </Link>
+              </li>
+
+            </>
+          )}
+
+          {user?.role === "JobSeeker" && (
             <li>
-              <Link to="/profile" onClick={() => setShow(false)}>
-                PROFILE
+              <Link
+                to="/applications/me"
+                onClick={() => setShow(false)}
+                className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+              >
+                MY APPLICATIONS
               </Link>
             </li>
           )}
 
-
-
-          {/* <li>
-            <button onClick={handleLogout} className="bg-white text-green-900 px-4 py-2 rounded-lg">
-              LOGOUT
-            </button>
-          </li>
-
-          <li>
-            <Link to="/login" onClick={() => setShow(false)}>
-              <button className="bg-white text-green-900 px-4 py-2 rounded-lg">
-                LOGIN
-              </button>
-            </Link>
-          </li> */}
+          {(user?.role === 'JobSeeker' || user?.role === "Client") && (
+            <li>
+              <Link
+                to="/profile"
+                onClick={() => setShow(false)}
+                className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+              >
+                PROFILE
+              </Link>
+            </li>
+          )}
 
           {/* Auth Buttons */}
           {isAuthorized ? (
             <li>
               <button
                 onClick={handleLogout}
-                className="bg-white text-green-900 px-4 py-2 rounded-lg cursor-pointer hover:bg-green-200 transition duration-300"
+                className="block px-4 py-2 bg-white text-green-900 rounded-lg hover:bg-green-200 transition duration-300"
               >
                 LOGOUT
               </button>
             </li>
           ) : (
             <li>
-              <Link to="/login" onClick={() => setShow(false)}>
-                <button className="bg-white text-green-900 px-4 py-2 rounded-lg cursor-pointer hover:bg-green-200 transition duration-300">
-                  LOGIN
-                </button>
+              <Link
+                to="/login"
+                onClick={() => setShow(false)}
+                className="block px-4 py-2 bg-white text-green-900 rounded-lg hover:bg-green-200 transition duration-300"
+              >
+                LOGIN
               </Link>
             </li>
           )}
-
-
         </ul>
-
-        {/* Hamburger Icon */}
-        <div className="hamburger md:hidden" onClick={() => setShow(!show)}>
-          {show ? <AiOutlineClose size={24} /> : <GiHamburgerMenu size={24} />}
-        </div>
       </div>
     </nav>
   );

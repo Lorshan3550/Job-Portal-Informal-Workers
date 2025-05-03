@@ -29,11 +29,13 @@ const app = express();
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL],
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2], 
     method: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
 );
+
+console.log("Allowed Origins:", process.env.FRONTEND_URL, process.env.FRONTEND_URL_2);
 
 app.use(bodyParser.json());
 app.use(cookieParser());

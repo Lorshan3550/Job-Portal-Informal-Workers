@@ -508,3 +508,98 @@ export const getAllApplicationsCategorizedByJobForAdmin = catchAsyncErrors(async
 });
 
 
+export const jobseekerGetApprovedApplications = catchAsyncErrors(async (req, res, next) => {
+  const { role, _id: jobSeekerId } = req.user;
+
+  // Ensure the user is a JobSeeker
+  if (role !== "JobSeeker") {
+    return next(new ErrorHandler("Only JobSeekers can access this resource.", 403));
+  }
+
+  // Retrieve all applications submitted by the jobseeker
+  const applications = await Application.find({ workerId: jobSeekerId })
+    .populate("jobId", "title category province district city adminApproval") // Populate job details
+    .populate("workerId", "firstName lastName email phone gender"); // Populate worker details
+
+  if (!applications.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No applications found for this jobseeker.",
+    });
+  }
+
+  // Filter applications for jobs approved by the admin
+  const approvedApplications = applications.filter(
+    (application) => application.jobId && application.jobId.adminApproval === true
+  );
+
+  if (!approvedApplications.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No applications found for admin-approved jobs.",
+    });
+  }
+
+  // Categorize applications by jobId
+  const categorizedApplications = approvedApplications.reduce((acc, application) => {
+    const jobId = application.jobId._id.toString();
+    if (!acc[jobId]) {
+      acc[jobId] = {
+        jobId: application.jobId._id,
+        jobTitle: application.jobId.title,
+        applications: [],
+      };
+    }
+    acc[jobId].applications.push(application);
+    return acc;
+  }, {});
+
+  res.status(200).json({
+    success: true,
+    count: approvedApplications.length,
+    categorizedApplications: Object.values(categorizedApplications),
+  });
+});
+
+
+export const getJobSeekersByJobId = catchAsyncErrors(async (req, res, next) => {
+  const { jobId } = req.params;
+
+  // Validate if the job exists
+  const job = await Job.findById(jobId);
+  if (!job) {
+    return next(new ErrorHandler("Job not found.", 404));
+  }
+
+  // Fetch all applications for the given job ID
+  const applications = await Application.find({ jobId: jobId })
+    .populate("workerId", "firstName lastName email phone gender skills") // Populate worker details
+    .select("workerId status appliedAt"); // Select only relevant fields
+
+  if (!applications.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No job seekers have applied to this job.",
+    });
+  }
+
+  // Extract job seeker details
+  const jobSeekers = applications.map((application) => ({
+    workerId: application.workerId._id,
+    firstName: application.workerId.firstName,
+    lastName: application.workerId.lastName,
+    email: application.workerId.email,
+    phone: application.workerId.phone,
+    gender: application.workerId.gender,
+    skills: application.workerId.skills,
+    status: application.status,
+    appliedAt: application.appliedAt,
+  }));
+
+  res.status(200).json({
+    success: true,
+    count: jobSeekers.length,
+    jobSeekers,
+  });
+});
+

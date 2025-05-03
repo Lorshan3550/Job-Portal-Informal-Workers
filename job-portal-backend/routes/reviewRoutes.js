@@ -1,5 +1,5 @@
 import express from "express";
-import { postReview, getAllReviews, getUserReviews , getUserReviewsById, getReviewsByJobId, updateReview, deleteReview, updateReviewFlag} from "../controllers/reviewController.js";
+import { postReview, getAllReviews, getUserReviews , getUserReviewsById, getReviewsByJobId, updateReview, deleteReview, updateReviewFlag, getReviewById} from "../controllers/reviewController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -14,10 +14,13 @@ router.get("/reviews", getAllReviews);
 router.get("/review", isAuthenticated, getUserReviews);
 
 // Get reviews based on user ID from path parameter
-router.get("/review/:userId", isAuthenticated, getUserReviewsById);
+router.get("/review/user/:userId", isAuthenticated, getUserReviewsById);
 
 // Get reviews based on job ID from path parameter
 router.get("/reviews/:jobId", isAuthenticated, getReviewsByJobId);
+
+// Get reviews based on review ID from path parameter
+router.get("/review/:reviewId", isAuthenticated, getReviewById);
 
 // Update a review (Authenticated)
 router.put("/review/:reviewId", isAuthenticated, updateReview);

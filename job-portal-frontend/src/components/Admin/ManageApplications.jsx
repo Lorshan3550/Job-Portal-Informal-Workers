@@ -14,8 +14,10 @@ const ManageApplications = () => {
           "http://localhost:4000/api/v1/application/admin/get-categorized-applications",
           { withCredentials: true }
         );
+        console.log(data);
         setCategorizedApplications(data.categorizedApplications);
       } catch (error) {
+      
         console.error("Error fetching applications:", error);
       }
     };

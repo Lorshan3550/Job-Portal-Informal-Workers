@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Context } from "../../main";
-import { provinces } from "./_utils/constants";
+import { provinces, jobSkills } from "./_utils/constants";
+import CreatableSelect from "react-select/creatable";
 import {
   FaUser,
   FaEnvelope,
@@ -20,11 +21,11 @@ const Register = () => {
   const [lastname, setLastName] = useState("");
   const [personalSummary, setPersonalSummary] = useState("");
   const [phone, setPhone] = useState("");
-  const [workExperiences, setWorkExperiences] = useState("");
+  const [workExperiences, setWorkExperiences] = useState([]);
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
-  const [skills, setSkills] = useState("");
-  const [achievements, setAchievements] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [achievements, setAchievements] = useState([]);
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [location, setLocation] = useState("");
@@ -95,9 +96,9 @@ const Register = () => {
           phone: phone,
           province: province.toLowerCase(), // ✅ ensure lowercase
           district: district.toLowerCase(), // ✅ ensure lowercase
-          skills: role === "JobSeeker" ? skills.split(",") : [],
-          achievements: role === "JobSeeker" ? achievements.split(",") : [],
-          workExperiences: role === "JobSeeker" ? workExperiences.split(",") : [],
+          skills: role === "JobSeeker" ? skills.map((skill) => skill.value) : [],
+          achievements: role === "JobSeeker" ? achievements.map((achievement) => achievement.value) : [],
+          workExperiences: role === "JobSeeker" ? workExperiences.map((experience) => experience.value) : [],
           password: password,
           role: role,
           location: location,
@@ -132,6 +133,21 @@ const Register = () => {
           className="w-full grid grid-cols-1 md:grid-cols-2 gap-4"
           onSubmit={handleRegister}
         >
+          {/* Role */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Role
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="">Select Role</option>
+              <option value="JobSeeker">Job Seeker</option>
+              <option value="Client">Client</option>
+            </select>
+          </div>
           {/* First Name */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -201,17 +217,15 @@ const Register = () => {
             />
           </div>
 
+          {/* Work Experiences */}
           {role === "JobSeeker" && (
             <div className="mb-4 col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Work Experiences
-              </label>
-              <input
-                type="text"
+              <label className="block text-sm font-medium text-gray-700 mb-2">Work Experiences</label>
+              <CreatableSelect
+                isMulti
                 value={workExperiences}
-                onChange={(e) => setWorkExperiences(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                placeholder="Enter work experiences (comma-separated)"
+                onChange={setWorkExperiences}
+                placeholder="Add work experiences"
               />
             </div>
           )}
@@ -273,7 +287,7 @@ const Register = () => {
           {/* Skills */}
           {role === "JobSeeker" && (
             <div className="mb-4 col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              {/* <label className="block text-sm font-medium text-gray-700 mb-2">
                 Skills
               </label>
               <input
@@ -282,6 +296,14 @@ const Register = () => {
                 onChange={(e) => setSkills(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder="Enter skills (comma-separated)"
+              /> */}
+              <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
+              <CreatableSelect
+                isMulti
+                value={skills}
+                onChange={setSkills}
+                options={jobSkills.map((skill) => ({ value: skill, label: skill }))}
+                placeholder="Search or add skills"
               />
             </div>
           )}
@@ -289,7 +311,7 @@ const Register = () => {
           {/* Achievements */}
           {role === "JobSeeker" && (
             <div className="mb-4 col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              {/* <label className="block text-sm font-medium text-gray-700 mb-2">
                 Achievements
               </label>
               <input
@@ -298,6 +320,13 @@ const Register = () => {
                 onChange={(e) => setAchievements(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder="Enter achievements (comma-separated)"
+              /> */}
+              <label className="block text-sm font-medium text-gray-700 mb-2">Achievements</label>
+              <CreatableSelect
+                isMulti
+                value={achievements}
+                onChange={setAchievements}
+                placeholder="Add achievements"
               />
             </div>
           )}
@@ -316,21 +345,7 @@ const Register = () => {
             />
           </div>
 
-          {/* Role */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Role
-            </label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Select Role</option>
-              <option value="JobSeeker">Job Seeker</option>
-              <option value="Client">Client</option>
-            </select>
-          </div>
+          
 
           {/* Location */}
           <div className="mb-4">

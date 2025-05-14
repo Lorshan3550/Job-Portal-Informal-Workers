@@ -28,10 +28,10 @@ const jobSchema = new mongoose.Schema({
     validate: {
       validator: function (skills) {
         const selectedCategory = jobCategories.find(
-          (category) => category.name === this.category
+          (category) => category.name.toLowerCase() === this.category.toLowerCase()
         );
         return selectedCategory
-          ? skills.every((skill) => selectedCategory.skills.includes(skill))
+          ? skills.every((skill) => selectedCategory.skills.map((skill) => skill.toLowerCase()).includes(skill))
           : false;
       },
       message: "One or more skills are not valid for the selected category.",

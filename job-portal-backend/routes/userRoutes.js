@@ -19,6 +19,7 @@ router.get("/get-categorized-users", isAuthenticated, getUsersCategorizedByRole)
 router.get("/getalluser", allUsers);
 
 
+
 router.delete("/admin/hard-delete-user/:userId", isAuthenticated, hardDeleteUser);
 router.delete("/deleteuser", isAuthenticated, deleteAccount);
 

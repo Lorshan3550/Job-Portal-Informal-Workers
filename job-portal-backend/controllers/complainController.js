@@ -68,4 +68,4 @@ export const updateComplainStatus = catchAsyncErrors(async (req, res, next) => {
       message: "Complaint status updated successfully!",
       complain,
     });
-  });
+});

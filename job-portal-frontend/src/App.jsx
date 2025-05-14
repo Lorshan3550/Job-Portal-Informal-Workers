@@ -116,6 +116,8 @@ import AdminHome from "./components/Admin/AdminHome";
 import PostReview from "./components/Review/PostReview";
 import UpdateReview from "./components/Review/UpdateReview";
 import MyReview from "./components/Review/MyReview";
+import Review from "./components/Review/Review";
+import ManageReviews from "./components/Admin/ManageReviews";
 
 const App = () => {
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
@@ -161,6 +163,7 @@ const App = () => {
           <Route path="manage-jobs" element={<ManageJobs />} />
           <Route path="manage-applications" element={<ManageApplications />} />
           <Route path="manage-users" element={<ManageUsers />} />
+          <Route path="manage-reviews" element={<ManageReviews />} />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -176,7 +179,8 @@ const App = () => {
         <Route path="/application/:id" element={<Application />} />
         <Route path="/applications/me" element={<MyApplications />} />
         <Route path="/applications/client" element={<ClientApplications />} />
-        <Route path="/review" element={<MyReview />} />
+        <Route path="/review" element={<Review />} />
+        <Route path="/review/me" element={<MyReview />} />
         <Route path="/review/post" element={<PostReview/>} />
         <Route path="/review/update/:reviewId" element={<UpdateReview />} />
 

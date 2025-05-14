@@ -3,6 +3,7 @@ import ErrorHandler from "../middlewares/error.js";
 import { Admin } from "../models/adminSchema.js";
 import { Application } from "../models/applicationSchema.js";
 import { Job } from "../models/jobSchema.js";
+import { Review } from "../models/reviewSchema.js";
 import { User } from "../models/userSchema.js";
 import { sendToken } from "../utils/jwtToken.js";
 
@@ -31,8 +32,8 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
     sendToken(admin, 201, res, "Admin Registered Sucessfully !");
   });
   
-  // Login User
-  export const loginAdmin = catchAsyncErrors(async (req, res, next) => {
+// Login User
+export const loginAdmin = catchAsyncErrors(async (req, res, next) => {
   
     const { email, password } = req.body;
     
@@ -56,7 +57,7 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
   });
   
 // Update Admin Information
-  export const updateAdmin = catchAsyncErrors(async (req, res, next) => {
+export const updateAdmin = catchAsyncErrors(async (req, res, next) => {
     const {_id : adminId} = req.admin;
     const { name, email, role, password} = req.body;
     
@@ -84,7 +85,7 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
   });
   
 // Logout Admin
-  export const logout = catchAsyncErrors(async (req, res, next) => {
+export const logout = catchAsyncErrors(async (req, res, next) => {
     res
       .status(201)
       .cookie("token", "", {
@@ -98,8 +99,8 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
   });
 
 
-  // Reset User Password by Admin
-  export const resetUserPasswordByAdmin = catchAsyncErrors(async (req, res, next) => {
+// Reset User Password by Admin
+export const resetUserPasswordByAdmin = catchAsyncErrors(async (req, res, next) => {
     const { userId } = req.params; // Extract user ID from request parameters
     const { dummyPassword } = req.body; // Extract the dummy password from the request body
   
@@ -129,8 +130,8 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
     });
   });
   
-  // Hard Delete User - Admin
-  export const hardDeleteUser = catchAsyncErrors(async (req, res, next) => {
+// Hard Delete User - Admin
+export const hardDeleteUser = catchAsyncErrors(async (req, res, next) => {
     const { userId } = req.params; // Extract user ID from request parameters
   
     // Ensure the request is made by an admin
@@ -170,8 +171,8 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
     });
   });
   
-  // Update User Email by Admin
-  export const updateUserEmailByAdmin = catchAsyncErrors(async (req, res, next) => {
+// Update User Email by Admin
+export const updateUserEmailByAdmin = catchAsyncErrors(async (req, res, next) => {
     const { userId } = req.params; // Extract user ID from request parameters
     const { email } = req.body; // Extract the new email from the request body
   
@@ -208,8 +209,8 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
     });
   });
 
-  // Get all applications categorized by job for admin
-  export const getAllApplicationsCategorizedByJobForAdmin = catchAsyncErrors(async (req, res, next) => {
+// Get all applications categorized by job for admin
+export const getAllApplicationsCategorizedByJobForAdmin = catchAsyncErrors(async (req, res, next) => {
     // Ensure the request is made by an admin
     if (!req.admin) {
       return next(new ErrorHandler("Only admins can access this resource.", 403));
@@ -249,7 +250,8 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
     });
   });
 
-  export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
+// Update Admin Approval for Job
+export const updateAdminApprovalForJob = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params; // Job ID from the request parameters
     const { adminApproval, reasonForRejection } = req.body; // New admin approval status and reason for rejection
   
@@ -287,28 +289,7 @@ export const registerAdmin = catchAsyncErrors(async (req, res, next) => {
   });
   
 
-// export const getDashboardStats = catchAsyncErrors(async (req, res, next) => {
-//     // Ensure the request is made by an admin
-//     if (!req.admin) {
-//       return next(new ErrorHandler("Only admins can access this resource.", 403));
-//     }
-  
-//     // Fetch counts from the database
-//     const totalUsers = await User.countDocuments();
-//     const totalJobs = await Job.countDocuments();
-//     const totalApplications = await Application.countDocuments();
-  
-//     res.status(200).json({
-//       success: true,
-//       stats: {
-//         totalUsers,
-//         totalJobs,
-//         totalApplications,
-//       },
-//     });
-//   });
-
-
+// Get Dashboard Stats
 export const getDashboardStats = catchAsyncErrors(async (req, res, next) => {
   // Ensure the request is made by an admin
   if (!req.admin) {
@@ -353,3 +334,94 @@ export const getDashboardStats = catchAsyncErrors(async (req, res, next) => {
     },
   });
 });
+
+
+// Delete a review by admin
+export const deleteReviewByAdmin = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+
+  // Check if admin is logged in
+  if (!req.admin) {
+    return next(new ErrorHandler("Admin not authorized to delete review.", 401));
+  }
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Delete the review
+  await review.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "Review deleted successfully!",
+  });
+});
+
+
+// Update flagged status and reason of a review
+export const updateReviewFlag = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+  const { flagged, flaggedReason } = req.body;
+
+  // Check if admin is logged in
+  if (!req.admin) {
+    return next(new ErrorHandler("Admin not authorized to update review flag.", 401));
+  }
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Update the flagged status and reason
+  review.flagged = flagged;
+  if (flagged) {
+    review.flaggedReason = flaggedReason;
+  } else {
+    review.flaggedReason = null;
+  }
+
+  // Save the updated review
+  await review.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Review flagged status updated successfully!",
+    review,
+  });
+});
+
+
+// Update admin approval status of a review
+export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+  const { adminApproval } = req.body;
+
+  // Check if admin is logged in
+  if (!req.admin) {
+    return next(new ErrorHandler("Admin not authorized to update review approval.", 401));
+  }
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Update the admin approval status
+  review.adminApproval = adminApproval;
+
+  // Save the updated review
+  await review.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Review admin approval status updated successfully!",
+    review,
+  });
+});
+

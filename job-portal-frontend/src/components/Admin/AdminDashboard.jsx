@@ -48,6 +48,13 @@ const AdminDashboard = () => {
               <FaUsers />
               <span>Manage Users</span>
             </Link>
+            <Link
+              to="/admin/dashboard/manage-reviews"
+              className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700"
+            >
+              <FaUsers />
+              <span>Manage Reviews</span>
+            </Link>
             <button
               onClick={handleLogout}
               className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 w-full text-left"

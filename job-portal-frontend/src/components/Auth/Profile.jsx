@@ -799,6 +799,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import CreatableSelect from "react-select/creatable"
 import {
   FaUser,
   FaEnvelope,
@@ -810,8 +811,10 @@ import {
   FaTrophy,
   FaEdit,
   FaLock,
+  FaExpeditedssl,
+  FaToolbox
 } from "react-icons/fa";
-import { provinces } from "./_utils/constants";
+import { provinces, jobSkills } from "./_utils/constants";
 
 const Profile = () => {
   const [profile, setProfile] = useState({});
@@ -827,6 +830,10 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
+  const [skills, setSkills] = useState([]);
+  const [achievements, setAchievements] = useState([]);
+  const [workExperiences, setWorkExperiences] = useState([]);
+
   // Fetch user profile from the backend
   useEffect(() => {
     const fetchProfile = async () => {
@@ -837,6 +844,11 @@ const Profile = () => {
         );
         setProfile(data.user);
         setOriginalProfile(data.user);
+
+        setSkills(data.user.skills.map((skill) => ({ value: skill, label: skill })));
+        setAchievements(data.user.achievements.map((achievement) => ({ value: achievement, label: achievement })));
+        setWorkExperiences(data.user.workExperiences.map((experience) => ({ value: experience, label: experience })));
+
       } catch (error) {
         console.error(error);
         toast.error(
@@ -855,9 +867,16 @@ const Profile = () => {
   const handleUpdate = async () => {
     try {
       setLoading(true);
+      // Prepare the updated profile data
+    const updatedProfile = {
+      ...profile,
+      skills: skills.map((skill) => skill.value), // Convert skills to an array of strings
+      achievements: achievements.map((achievement) => achievement.value), // Convert achievements to an array of strings
+      workExperiences: workExperiences.map((experience) => experience.value), // Convert work experiences to an array of strings
+    };
       const { data } = await axios.put(
         `http://localhost:4000/api/v1/user/update/${profile._id}`,
-        profile,
+        updatedProfile,
         { withCredentials: true }
       );
       toast.success(data.message || "Profile updated successfully!");
@@ -875,6 +894,9 @@ const Profile = () => {
 
   const handleCancel = () => {
     setProfile(originalProfile);
+    setSkills(originalProfile.skills.map((skill) => ({ value: skill, label: skill })));
+    setAchievements(originalProfile.achievements.map((achievement) => ({ value: achievement, label: achievement })));
+    setWorkExperiences(originalProfile.workExperiences.map((experience) => ({ value: experience, label: experience })));
     setIsEditing(false);
   };
 
@@ -1007,26 +1029,102 @@ const Profile = () => {
             onChange={handleChange}
             disabled={!isEditing}
           />
-          {profile.role === "Worker" && (
+          {profile.role === "JobSeeker" && (
             <>
-              <InputField
-                icon={FaTools}
-                label="Skills"
-                name="skills"
-                value={profile.skills}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
-              <InputField
-                icon={FaTrophy}
-                label="Achievements"
-                name="achievements"
-                value={profile.achievements}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
+              <div className="mb-4 col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Skills
+                </label>
+                {isEditing ? (
+                  <CreatableSelect
+                    isMulti
+                    value={skills}
+                    onChange={setSkills}
+                    options={jobSkills.map((skill) => ({ value: skill, label: skill }))}
+                    placeholder="Add or search skills"
+                  />
+                ) : (
+                  <>
+                    {/* <p className="text-gray-700">{profile.skills?.join(", ") || "N/A"}</p> */}
+                    <InputField
+                      icon={FaTools}
+                      label=""
+                      name="skills"
+                      value={profile.skills?.join(", ") || "N/A"}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                    />
+                  </>
+
+                )}
+              </div>
             </>
           )}
+
+          {profile.role === "JobSeeker" && (
+            <>
+              <div className="mb-4 col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Achievements
+                </label>
+                {isEditing ? (
+                  <CreatableSelect
+                    isMulti
+                    value={achievements}
+                    onChange={setAchievements}
+                    options={[]}
+                    placeholder="Add achievements"
+                  />
+                ) : (
+                  <InputField
+                    icon={FaTrophy}
+                    label=""
+                    name="Achievements"
+                    value={profile.achievements?.join(", ") || "N/A"}
+                    onChange={handleChange}
+                    disabled={!isEditing}
+                  />
+                )}
+              </div>
+            </>
+          )}
+
+          {profile.role === "JobSeeker" && (
+            <>
+              <div className="mb-2 col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Work Experiences
+                </label>
+                {isEditing ? (
+                  <CreatableSelect
+                    isMulti
+                    value={workExperiences}
+                    onChange={setWorkExperiences}
+                    options={[]}
+                    placeholder="Add work experiences"
+                  />
+                ) : (
+                  <>
+                    {/* <p className="text-gray-700">{profile.workExperiences?.join(", ") || "N/A"}</p> */}
+                    <InputField
+                      icon={FaToolbox}
+                      label=""
+                      name="Work Experiences"
+                      value={profile.workExperiences?.join(", ") || "N/A"}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                    />
+
+                  </>
+
+                )}
+              </div>
+            </>
+          )}
+
+
+
+
         </div>
 
         {/* Edit Profile Buttons */}

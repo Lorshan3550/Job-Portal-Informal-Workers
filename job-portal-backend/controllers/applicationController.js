@@ -522,10 +522,11 @@ export const jobseekerGetApprovedApplications = catchAsyncErrors(async (req, res
     .populate("workerId", "firstName lastName email phone gender"); // Populate worker details
 
   if (!applications.length) {
-    return res.status(404).json({
-      success: false,
-      message: "No applications found for this jobseeker.",
-    });
+    // return res.status(404).json({
+    //   success: false,
+    //   message: "No applications found for this jobseeker.",
+    // });
+    return next(new ErrorHandler("No applications found for this jobseeker.", 404));
   }
 
   // Filter applications for jobs approved by the admin
@@ -534,10 +535,12 @@ export const jobseekerGetApprovedApplications = catchAsyncErrors(async (req, res
   );
 
   if (!approvedApplications.length) {
-    return res.status(404).json({
-      success: false,
-      message: "No applications found for admin-approved jobs.",
-    });
+    // return res.status(404).json({
+    //   success: false,
+    //   message: "No applications found for admin-approved jobs.",
+    // });
+    return next(new ErrorHandler("No applications found for admin-approved jobs.", 404));
+
   }
 
   // Categorize applications by jobId
@@ -602,4 +605,6 @@ export const getJobSeekersByJobId = catchAsyncErrors(async (req, res, next) => {
     jobSeekers,
   });
 });
+
+
 

@@ -200,6 +200,7 @@ const MyReview = () => {
           "http://localhost:4000/api/v1/review/review",
           { withCredentials: true }
         );
+        console.log(data);
         setReviewsGiven(data.reviewsGiven);
         setReviewsReceived(data.reviewsReceived);
       } catch (error) {
@@ -246,6 +247,14 @@ const MyReview = () => {
       <div className="flex justify-between items-center sm:flex-col md:flex-row">
         <div>
           <p className="text-gray-700">
+            <span className="font-semibold">Reviewer Name:
+            </span>{!review.isAnonymous  ? `${review.reviewerId.firstName} ${review.reviewerId.lastName}` : "Anonymous Reviewer"}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold">Reviewee Name:
+            </span>{`${review.revieweeId.firstName} ${review.revieweeId.lastName}`}
+          </p>
+          <p className="text-gray-700">
             <span className="font-semibold">Title:</span> {review.title || "No Title"}
           </p>
           <p className="text-gray-700">
@@ -263,10 +272,10 @@ const MyReview = () => {
             <span className="font-semibold">Status:</span>{" "}
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium ${review.adminApproval === "Approved"
-                  ? "bg-green-100 text-green-800"
-                  : review.adminApproval === "Rejected"
-                    ? "bg-red-100 text-red-800"
-                    : "bg-yellow-100 text-yellow-800"
+                ? "bg-green-100 text-green-800"
+                : review.adminApproval === "Rejected"
+                  ? "bg-red-100 text-red-800"
+                  : "bg-yellow-100 text-yellow-800"
                 }`}
             >
               {review.adminApproval || "Pending"}

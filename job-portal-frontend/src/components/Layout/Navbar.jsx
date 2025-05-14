@@ -423,15 +423,26 @@ const Navbar = () => {
             <>
               <li>
                 <Link
-                  to="/review"
+                  to="/review/me"
                   onClick={() => setShow(false)}
                   className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
                 >
                   MY REVIEWS
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/review"
+                  onClick={() => setShow(false)}
+                  className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+                >
+                  ALL REVIEWS
+                </Link>
+              </li>
             </>
           )}
+
+
 
           {user?.role === "Client" && (
             <>

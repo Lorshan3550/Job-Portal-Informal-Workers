@@ -119,9 +119,9 @@ export const update = catchAsyncErrors(async (req, res, next) => {
   if (lastName) user.lastName = lastName;
   if (location) user.location = location;
   if (phone) user.phone = phone;
-  if (skills && user.role === "Worker") user.skills = skills; // Only workers can update skills
-  if (achievements && user.role === "Worker") user.achievements = achievements; // Only workers can update skills
-  if (workExperiences && user.role === "Worker") user.workExperiences = workExperiences; // Only workers can update skills
+  if (skills && user.role === "JobSeeker") user.skills = skills; // Only workers can update skills
+  if (achievements && user.role === "JobSeeker") user.achievements = achievements; // Only workers can update skills
+  if (workExperiences && user.role === "JobSeeker") user.workExperiences = workExperiences; // Only workers can update skills
   if (personalSummary) user.personalSummary = personalSummary;
   if (gender) user.gender = gender;
   if (dateOfBirth) user.dateOfBirth = dateOfBirth;

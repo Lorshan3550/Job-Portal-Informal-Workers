@@ -10,7 +10,10 @@ import {
   getApprovedJobs,
   updateAdminApproval,
   getNonApprovedJobs,
-  getAllJobsWithRejectionLogic
+  getAllJobsWithRejectionLogic,
+  getApprovedJobsByCategory,
+  searchApprovedJobs,
+  getRecommendedJobs
 } from "../controllers/jobController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
@@ -26,6 +29,9 @@ router.get("/getallwithrejectionlogic", getAllJobsWithRejectionLogic);
 router.post("/post", isAuthenticated, postJob);
 
 router.get("/getmyjobs", isAuthenticated, getMyJobs);
+router.get("/approved-jobs-by-category", getApprovedJobsByCategory);
+router.get("/search-approved-jobs", searchApprovedJobs);
+router.get("/recommended-jobs", isAuthenticated, getRecommendedJobs);
 
 router.put("/update/:id", isAuthenticated, updateJob);
 router.put("/update-approval/:id", isAuthenticated, updateAdminApproval);

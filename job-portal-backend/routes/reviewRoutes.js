@@ -1,5 +1,5 @@
 import express from "express";
-import { postReview, getAllReviews, getUserReviews , getUserReviewsById, getReviewsByJobId, updateReview, deleteReview, updateReviewFlag, getReviewById} from "../controllers/reviewController.js";
+import { postReview, getAllReviews, getUserReviews , getUserReviewsById, getReviewsByJobId, updateReview, deleteReview, updateReviewFlag, getReviewById, getApprovedReviews, updateAdminApproval, deleteReviewByAdmin} from "../controllers/reviewController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -22,14 +22,22 @@ router.get("/reviews/:jobId", isAuthenticated, getReviewsByJobId);
 // Get reviews based on review ID from path parameter
 router.get("/review/:reviewId", isAuthenticated, getReviewById);
 
+// Get all approved and non-flagged reviews (Authenticated)
+router.get("/approved-and-notflagged", isAuthenticated, getApprovedReviews);
+
 // Update a review (Authenticated)
 router.put("/review/:reviewId", isAuthenticated, updateReview);
 
 // Delete a review (Authenticated)
 router.delete("/review/:reviewId", isAuthenticated, deleteReview);
 
+router.delete("/delete-review/:reviewId", isAuthenticated, deleteReviewByAdmin);
+
+
 // Update flagged status and reason of a review (Authenticated)
 router.put("/flag/:reviewId", isAuthenticated, updateReviewFlag);
+
+router.put("/review/adminApproval/:reviewId", isAuthenticated, updateAdminApproval)
 
 
 // // Get all reviews for a specific user (Authenticated)

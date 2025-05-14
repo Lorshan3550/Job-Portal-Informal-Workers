@@ -453,11 +453,88 @@ export const updateReview = catchAsyncErrors(async (req, res, next) => {
 
 
 export const getAllReviews = catchAsyncErrors(async (req, res, next) => {
-  const reviews = await Review.find();
+  const reviews = await Review.find().populate("reviewerId", "firstName lastName email role") // Populate reviewer details
+    .populate("revieweeId", "firstName lastName email role") // Populate reviewee deta;
 
   res.status(200).json({
     success: true,
     reviews,
+  });
+});
+
+// export const getApprovedReviews = catchAsyncErrors(async (req, res, next) => {
+//   const { _id: userId, role } = req.user;
+
+//   // Ensure the user is logged in
+//   if (!userId || !role) {
+//     return next(new ErrorHandler("You must be logged in to access reviews.", 401));
+//   }
+
+//   // Fetch reviews with adminApproval = "Approved" and flagged = false
+//   const reviews = await Review.find({
+//     adminApproval: "Approved",
+//     flagged: false,
+//   })
+//     .populate("reviewerId", "firstName lastName email role") // Populate reviewer details
+//     .populate("revieweeId", "firstName lastName email role") // Populate reviewee details
+//     .populate("jobId", "title description postedBy"); // Populate job details
+
+//   res.status(200).json({
+//     success: true,
+//     reviews,
+//   });
+// });
+
+export const getApprovedReviews = catchAsyncErrors(async (req, res, next) => {
+  const { _id: userId, role } = req.user;
+
+  // Ensure the user is logged in
+  if (!userId || !role) {
+    return next(new ErrorHandler("You must be logged in to access reviews.", 401));
+  }
+
+  // Fetch reviews with adminApproval = "Approved" and flagged = false
+  const reviews = await Review.find({
+    adminApproval: "Approved",
+    flagged: false,
+  })
+    .populate("reviewerId", "firstName lastName email role") // Populate reviewer details
+    .populate("revieweeId", "firstName lastName email role") // Populate reviewee details
+    .populate("jobId", "title description postedBy createdAt"); // Populate job details
+
+  // Categorize reviews into Client Reviews and User Reviews
+  const clientReviews = {}; // JobSeeker to Client
+  const jobSeekerReviews = {}; // Client to JobSeeker
+
+  reviews.forEach((review) => {
+    const jobId = review.jobId._id.toString();
+    const jobTitle = review.jobId.title;
+
+    if (review.type === "JobSeekerToClient") {
+      // Categorize under Client Reviews
+      if (!clientReviews[jobId]) {
+        clientReviews[jobId] = {
+          jobTitle,
+          reviews: [],
+        };
+      }
+      clientReviews[jobId].reviews.push(review);
+    } else if (review.type === "ClientToJobSeeker") {
+      // Categorize under User Reviews
+      if (!jobSeekerReviews[jobId]) {
+        jobSeekerReviews[jobId] = {
+          jobTitle,
+          reviews: [],
+        };
+      }
+      jobSeekerReviews[jobId].reviews.push(review);
+    }
+  });
+
+  res.status(200).json({
+    success: true,
+    clientReviews,
+    jobSeekerReviews,
   });
 });
 
@@ -466,10 +543,14 @@ export const getUserReviews = catchAsyncErrors(async (req, res, next) => {
   const { _id: userId } = req.user;
 
   // Fetch reviews where the user is the reviewer
-  const reviewsGiven = await Review.find({ reviewerId: userId });
+  const reviewsGiven = await Review.find({ reviewerId: userId }).populate("reviewerId", "firstName lastName email role") // Populate reviewer details
+  .populate("revieweeId", "firstName lastName email role") // Populate reviewee details
+  .populate("jobId", "title description postedBy"); // Populate job details;
 
   // Fetch reviews where the user is the reviewee
-  const reviewsReceived = await Review.find({ revieweeId: userId });
+  const reviewsReceived = await Review.find({ revieweeId: userId }).populate("reviewerId", "firstName lastName email role") // Populate reviewer details
+  .populate("revieweeId", "firstName lastName email role") // Populate reviewee details
+  .populate("jobId", "title description postedBy"); // Populate job details;
 
   res.status(200).json({
     success: true,
@@ -733,6 +814,30 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+// Delete a review by admin
+export const deleteReviewByAdmin = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+
+  // Check if admin is logged in
+  if (!req.admin) {
+    return next(new ErrorHandler("Admin not authorized to delete review.", 401));
+  }
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Delete the review
+  await review.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "Review deleted successfully!",
+  });
+});
+
 // Update flagged status and reason of a review
 export const updateReviewFlag = catchAsyncErrors(async (req, res, next) => {
   const { reviewId } = req.params;
@@ -763,6 +868,36 @@ export const updateReviewFlag = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Review flagged status updated successfully!",
+    review,
+  });
+});
+
+
+// Update admin approval status of a review
+export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
+  const { reviewId } = req.params;
+  const { adminApproval } = req.body;
+
+  // Check if admin is logged in
+  if (!req.admin) {
+    return next(new ErrorHandler("Admin not authorized to update review approval.", 401));
+  }
+
+  // Validate if the review exists
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  // Update the admin approval status
+  review.adminApproval = adminApproval;
+
+  // Save the updated review
+  await review.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Review admin approval status updated successfully!",
     review,
   });
 });

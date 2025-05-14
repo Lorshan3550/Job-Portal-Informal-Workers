@@ -1,7 +1,7 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import { Job } from "../models/jobSchema.js";
 import ErrorHandler from "../middlewares/error.js";
-import { sriLankaProvinces, workTypes, jobCategories, jobExperience } from "../utils/commonVariables.js";
+import { sriLankaProvinces, workTypes, jobCategories, jobExperience, jobSkills } from "../utils/commonVariables.js";
 import validator from "validator";
 
 // Get All Jobs - 
@@ -22,7 +22,7 @@ export const getAllJobs = catchAsyncErrors(async (req, res, next) => {
   });
   res.status(200).json({
     success: true,
-    noOfJobs : jobs.length ,
+    noOfJobs: jobs.length,
     jobs,
   });
 });
@@ -60,7 +60,7 @@ export const getApprovedJobs = catchAsyncErrors(async (req, res, next) => {
 
 // Get All Jobs - NotAdminApproved
 export const getNonApprovedJobs = catchAsyncErrors(async (req, res, next) => {
-  const jobs = await Job.find({ expired: false,  adminApproval: false  });
+  const jobs = await Job.find({ expired: false, adminApproval: false });
   res.status(200).json({
     success: true,
     noOfJobs: jobs.length,
@@ -146,9 +146,16 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Invalid job category.", 400));
   }
 
-  const invalidSkills = requiredSkills.filter(
-    (skill) => !selectedCategory.skills.includes(skill)
+  const skillsArray = Array.isArray(requiredSkills)
+    ? requiredSkills.map((skill) => skill.trim().toLowerCase()) // If it's already an array
+    : requiredSkills.split(",").map((skill) => skill.trim().toLowerCase()); // If it's a single string
+
+  console.log("skillsArray: ", skillsArray)
+
+  const invalidSkills = skillsArray.filter(
+    (skill) => !selectedCategory.skills.map((sk) => sk.toLowerCase()).includes(skill)
   );
+  console.log("Invalid Skills : ", invalidSkills)
   if (invalidSkills.length > 0) {
     return next(
       new ErrorHandler(
@@ -205,14 +212,14 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
   if (!req.user || !req.user._id) {
     return next(new ErrorHandler("User authentication error. Please login again.", 400));
   }
-  
+
 
   // Create the job document
   const job = await Job.create({
     title,
     description,
     category,
-    requiredSkills,
+    requiredSkills: skillsArray,
     province,
     district,
     city,
@@ -250,7 +257,7 @@ export const getMyJobs = catchAsyncErrors(async (req, res, next) => {
   const myJobs = await Job.find({ postedBy: req.user._id });
   res.status(200).json({
     success: true,
-    noOfJobs : myJobs.length,
+    noOfJobs: myJobs.length,
     myJobs,
   });
 });
@@ -317,7 +324,7 @@ export const updateJob = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Apply updates manually
-  Object.assign(job, { category, requiredSkills, ...otherFields});
+  Object.assign(job, { category, requiredSkills, ...otherFields });
 
   // Save the updated job
   await job.save();
@@ -451,3 +458,272 @@ export const getSingleJob = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler(`Invalid ID / CastError`, 404));
   }
 });
+
+
+
+// Fetch all admin approved jobs categorized by the categories.
+export const getApprovedJobsByCategory = catchAsyncErrors(async (req, res, next) => {
+  try {
+    // Fetch all admin-approved jobs
+    const approvedJobs = await Job.find({ adminApproval: true });
+
+    // Sort jobCategories alphabetically by their name
+    const sortedCategories = jobCategories.sort((a, b) => a.name.localeCompare(b.name))
+
+    // Initialize the categorizedJobs object with all categories from jobCategories
+    const categorizedJobs = jobCategories.reduce((acc, category) => {
+      acc[category.name] = { jobs: [], count: 0 };
+      return acc;
+    }, {});
+
+    // Add a custom "All category"
+    categorizedJobs['All'] = { jobs: approvedJobs, count: approvedJobs.length };
+
+    // console.log("Categorized Jobs : ", categorizedJobs)
+
+    // Sort categorizedJobs by its keys in alphabetical order
+    const sortedCategorizedJobs = Object.keys(categorizedJobs)
+      .sort((a, b) => a.localeCompare(b)) // Sort keys alphabetically
+      .reduce((acc, key) => {
+        acc[key] = categorizedJobs[key]; // Rebuild the object in sorted order
+        return acc;
+      }, {});
+
+    // console.log(sortedCategorizedJobs)
+
+
+
+
+    // Categorize jobs by their category
+    // approvedJobs.forEach((job) => {
+    //   if (categorizedJobs[job.category]) {
+    //     categorizedJobs[job.category].jobs.push(job);
+    //     categorizedJobs[job.category].count += 1;
+    //   } else {
+    //     // If a job's category is not in jobCategories, add it to "Other"
+    //     categorizedJobs['Other'].jobs.push(job);
+    //     categorizedJobs['Other'].count += 1;
+    //   }
+    // });
+
+    approvedJobs.forEach((job) => {
+      if (categorizedJobs[job.category]) {
+        categorizedJobs[job.category].jobs.push(job);
+        categorizedJobs[job.category].count += 1;
+      } else {
+        // If a job's category is not in jobCategories, add it to "Other"
+        categorizedJobs['Other'].jobs.push(job);
+        categorizedJobs['Other'].count += 1;
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Admin-approved jobs categorized by category.",
+      categorizedJobs,
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Failed to fetch categorized jobs.", 500));
+  }
+});
+
+
+// Search all the admin appproved by different fields in the jobSchema.
+export const searchApprovedJobs = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const {
+      title,
+      category,
+      requiredSkills,
+      province,
+      district,
+      city,
+      workType,
+      education,
+      isCVRequired,
+    } = req.query;
+
+    // Build the search query
+    const query = { adminApproval: true }; // Only admin-approved jobs
+
+    // Validate and filter by title
+    if (title) {
+      query.title = { $regex: title, $options: "i" }; // Case-insensitive search
+    }
+
+    // Validate and filter by category
+    if (category) {
+      const validCategory = jobCategories.find((cat) => cat.name === category);
+      if (!validCategory) {
+        return next(new ErrorHandler("Invalid job category.", 400));
+      }
+      query.category = category;
+    }
+
+    // // Validate and filter by requiredSkills
+    // if (requiredSkills) {
+    //   const skillsArray = requiredSkills.split(",").map((skill) => skill.trim());
+    //   const invalidSkills = skillsArray.filter((skill) => !jobSkills.includes(skill));
+    //   if (invalidSkills.length > 0) {
+    //     return next(
+    //       new ErrorHandler(
+    //         `Invalid skills: ${invalidSkills.join(", ")}. Please provide valid skills.`,
+    //         400
+    //       )
+    //     );
+    //   }
+    //   query.requiredSkills = { $all: skillsArray }; // Match all skills in the array
+    // }
+
+    // Validate and filter by requiredSkills
+    // if (requiredSkills) {
+    //   const skillsArray = requiredSkills
+    //     .split(",")
+    //     .map((skill) => skill.trim().toLowerCase()); // Convert skills to lowercase
+
+    //   // console.log("Skills Array : ", skillsArray)
+
+    //   const invalidSkills = skillsArray.filter((skill) => !jobSkills.includes(skill));
+    //   if (invalidSkills.length > 0) {
+    //     return next(
+    //       new ErrorHandler(
+    //         `Invalid skills: ${invalidSkills.join(", ")}. Please provide valid skills.`,
+    //         400
+    //       )
+    //     );
+    //   }
+
+    //   query.requiredSkills = { $all: skillsArray }; // Match all skills in the array
+
+    //   const Qjobs = await Job.find({requiredSkills: 'farm work'});
+
+    //   console.log(Qjobs)
+
+    // }
+
+    // Validate and filter by requiredSkills
+    if (requiredSkills) {
+      // Ensure requiredSkills is treated as an array
+      const skillsArray = Array.isArray(requiredSkills)
+        ? requiredSkills.map((skill) => skill.trim().toLowerCase()) // If it's already an array
+        : requiredSkills.split(",").map((skill) => skill.trim().toLowerCase()); // If it's a single string
+
+      // Validate skills against jobSkills
+      const invalidSkills = skillsArray.filter((skill) => !jobSkills.includes(skill));
+      if (invalidSkills.length > 0) {
+        return next(
+          new ErrorHandler(
+            `Invalid skills: ${invalidSkills.join(", ")}. Please provide valid skills.`,
+            400
+          )
+        );
+      }
+
+      // Add the requiredSkills filter to the query
+      query.requiredSkills = skillsArray[0]; // Match all skills in the array
+
+    }
+
+    // Validate and filter by province
+    if (province) {
+      const validProvince = sriLankaProvinces.find(
+        (prov) => prov.province === province.toLowerCase()
+      );
+      if (!validProvince) {
+        return next(new ErrorHandler("Invalid province.", 400));
+      }
+      query.province = province.toLowerCase();
+    }
+
+    // Validate and filter by district
+    if (district) {
+      const validDistrict = sriLankaProvinces.find(
+        (prov) => prov.districts.includes(district.toLowerCase())
+      );
+      if (!validDistrict) {
+        return next(
+          new ErrorHandler(
+            `Invalid district: ${district}`,
+            400
+          )
+        );
+      }
+
+      query.district = district.toLowerCase();
+    }
+
+    // Validate and filter by city
+    if (city) {
+      query.city = { $regex: city, $options: "i" }; // Case-insensitive search
+    }
+
+    // Validate and filter by workType
+    if (workType) {
+      if (!workTypes.includes(workType)) {
+        return next(new ErrorHandler("Invalid work type.", 400));
+      }
+      query.workType = workType;
+    }
+
+    // Validate and filter by education
+    if (education) {
+      if (!educationLevels.includes(education)) {
+        return next(new ErrorHandler("Invalid education level.", 400));
+      }
+      query.education = education;
+    }
+
+    // Validate and filter by isCVRequired
+    if (isCVRequired !== undefined) {
+      query.isCVRequired = isCVRequired === "true"; // Convert string to boolean
+    }
+
+    // Execute the query
+    const jobs = await Job.find(query);
+
+    res.status(200).json({
+      success: true,
+      noOfJobs: jobs.length,
+      jobs,
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Failed to search jobs.", 500));
+  }
+});
+
+// Fetch the recommeded jobs based on the LoggedIn JobSeeker skills, province, district, location.
+export const getRecommendedJobs = catchAsyncErrors(async (req, res, next) => {
+  try {
+    // Ensure the user is logged in and is a JobSeeker
+    const { role, skills, province, district, location } = req.user;
+
+    if (role !== "JobSeeker") {
+      return next(
+        new ErrorHandler("Only JobSeekers can access recommended jobs.", 403)
+      );
+    }
+
+    // Build the search query
+    const query = {
+      adminApproval: true, // Only admin-approved jobs
+      $or: [
+        { requiredSkills: { $in: skills } }, // Match at least one skill
+        { province: province.toLowerCase() }, // Match province
+        { district: district.toLowerCase() }, // Match district
+        { city: { $regex: location, $options: "i" } }, // Match city (case-insensitive)
+      ],
+    };
+
+    // Fetch jobs matching the query
+    const jobs = await Job.find(query);
+
+    res.status(200).json({
+      success: true,
+      noOfJobs: jobs.length,
+      jobs,
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Failed to fetch recommended jobs.", 500));
+  }
+});
+

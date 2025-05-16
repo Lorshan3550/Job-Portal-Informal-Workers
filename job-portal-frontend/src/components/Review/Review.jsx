@@ -322,7 +322,7 @@ const Review = () => {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 min-h-screen bg-gradient-to-r from-green-50 via-green-100 to-green-50">
+    <div className="container mx-auto py-8 px-4 min-h-screen bg-gradient-to-r from-green-50 via-green-100 to-green-50 mt-32">
       <h1 className="text-3xl font-bold mb-6 text-center">Reviews</h1>
       <div className="flex justify-center space-x-4 mb-6">
         <button

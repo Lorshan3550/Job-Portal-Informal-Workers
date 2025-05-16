@@ -7,7 +7,7 @@ import applicationRouter from "./routes/applicationRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import fileRouter from "./routes/fileRoutes.js"
-import complainRouter from "./routes/complainRoutes.js";
+import notificationRouter from "./routes/notificationRoutes.js"
 import dotenv from 'dotenv'
 // import { config } from "dotenv";
 import cors from "cors";
@@ -35,6 +35,8 @@ app.use(
   })
 );
 
+app.use
+
 console.log("Allowed Origins:", process.env.FRONTEND_URL, process.env.FRONTEND_URL_2);
 
 app.use(bodyParser.json());
@@ -58,7 +60,8 @@ app.use("/api/v1/files", fileRouter);
 app.use("/api/v1/application", applicationRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/review", reviewRouter);
-app.use("/api/v1/complain", complainRouter);
+app.use("/api/v1/notification", notificationRouter);
+
 
 
 

@@ -807,6 +807,7 @@ import { Context } from "../../main";
 import axios from "axios";
 import { FaClock } from "react-icons/fa";
 import { sriLankaProvinces, workTypes, educationLevels, jobCategories, jobSkills } from "../Auth/_utils/constants";
+import { useRef } from "react";
 
 const Jobs = () => {
   const { user } = useContext(Context);
@@ -821,6 +822,21 @@ const Jobs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("All Jobs");
   const jobsPerPage = 5;
+  const [skillsFilter, setSkillsFilter] = useState(""); // For filtering the skills dropdown
+  const [skillsFilter1, setSkillsFilter1] = useState(""); // For filtering the skills dropdown
+
+
+
+  const [jobSeekerSearch, setJobSeekerSearch] = useState({
+    skills: [],
+    province: "",
+    district: "",
+    city: "",
+  });
+  const [jobSeekerResults, setJobSeekerResults] = useState([]);
+  const [expandedJobSeeker, setExpandedJobSeeker] = useState(null);
+  const [jobSeekerLoading, setJobSeekerLoading] = useState(false);
+
 
   // Fetch all jobs, categories, and recommended jobs
   useEffect(() => {
@@ -845,7 +861,7 @@ const Jobs = () => {
           { withCredentials: true }
         );
         console.log("Fetch Categories : ", data)
-        setCategories({ ...data.categorizedJobs });
+        setCategories({ All: { jobs: [...jobs], count: [...jobs].length }, ...data.categorizedJobs });
         console.log("Fetch Categories : ", categories)
 
       } catch (error) {
@@ -870,7 +886,7 @@ const Jobs = () => {
     fetchJobs();
     fetchCategories();
     fetchRecommendedJobs();
-  }, [user, setCategories]);
+  }, [user]);
 
   // Pagination logic
   const indexOfLastJob = currentPage * jobsPerPage;
@@ -907,6 +923,62 @@ const Jobs = () => {
     fetchJobs();
   };
 
+  // Handle skills input (multi-select or comma separated)
+  const handleSkillsInput = (e) => {
+    const value = e.target.value;
+    setJobSeekerSearch((prev) => ({
+      ...prev,
+      skills: value
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter((s) => s),
+    }));
+  };
+
+  // Handle province change and reset district
+  const handleProvinceChange = (e) => {
+    setJobSeekerSearch((prev) => ({
+      ...prev,
+      province: e.target.value,
+      district: "",
+    }));
+  };
+
+  // Search JobSeekers
+  const handleJobSeekerSearch = async () => {
+    setJobSeekerLoading(true);
+    try {
+      const params = {
+        ...jobSeekerSearch,
+        skills: jobSeekerSearch.skills.join(","),
+      };
+      const { data } = await axios.get(
+        "http://localhost:4000/api/v1/user/client/filter-jobseekers",
+        { params, withCredentials: true }
+      );
+      setJobSeekerResults(data.jobSeekers);
+    } catch (error) {
+      setJobSeekerResults([]);
+    }
+    setJobSeekerLoading(false);
+  };
+
+  // Filter jobSkills based on the filter input
+  const filteredJobSkills = jobSkills.filter(skill =>
+    skill.toLowerCase().includes(skillsFilter.toLowerCase())
+  );
+
+  // Filter jobSkills based on the filter input
+  const filteredJobSkills1 = jobSkills.filter(skill =>
+    skill.toLowerCase().includes(skillsFilter1.toLowerCase())
+  );
+
+  // Reset JobSeeker search
+  const resetJobSeekerSearch = () => {
+    setJobSeekerSearch({ skills: [], province: "", district: "", city: "" });
+    setJobSeekerResults([]);
+  };
+
   if (loading) {
     return (
       <section className="min-h-screen flex justify-center items-center">
@@ -925,11 +997,10 @@ const Jobs = () => {
             {Object.entries(categories).map(([category, { count }]) => (
               <li key={category}>
                 <button
-                  className={`w-full text-left px-4 py-2 rounded-lg ${
-                    count > 0
-                      ? "bg-green-100 hover:bg-green-200 text-green-800"
-                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  }`}
+                  className={`w-full text-left px-4 py-2 rounded-lg ${count > 0
+                    ? "bg-green-100 hover:bg-green-200 text-green-800"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    }`}
                   onClick={() => {
                     if (count > 0) {
                       setJobs(categories[category].jobs);
@@ -947,6 +1018,220 @@ const Jobs = () => {
 
         {/* Main Content */}
         <main className="col-span-3">
+          {/* --- Search JobSeekers Section (Client Only) --- */}
+          {user?.role === "Client" && (
+            <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
+              <h2 className="text-xl font-semibold mb-4">Search JobSeekers</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Skills input (multi-select or comma separated) */}
+                {/* <input
+                  type="text"
+                  placeholder="Enter or select skills (comma separated)"
+                  className="border rounded-lg px-4 py-2"
+                  value={jobSeekerSearch.skills.join(", ")}
+                  onChange={handleSkillsInput}
+                  list="skills-list"
+                />
+                <datalist id="skills-list">
+                  {jobSkills.map((skill, idx) => (
+                    <option key={idx} value={skill} />
+                  ))}
+                </datalist> */}
+                {/* <select
+                  multiple
+                  className="border rounded-lg px-4 py-2 h-32"
+                  value={jobSeekerSearch.skills}
+                  onChange={e => {
+                    const selected = Array.from(e.target.selectedOptions, option => option.value);
+                    setJobSeekerSearch(prev => ({ ...prev, skills: selected }));
+                  }}
+                >
+                  {jobSkills.map((skill, idx) => (
+                    <option key={idx} value={skill}>
+                      {skill}
+                    </option>
+                  ))}
+                </select> */}
+
+                <input
+                  type="text"
+                  placeholder="Type to filter skills"
+                  className="border rounded-lg px-4 py-2 mb-2 w-full"
+                  value={skillsFilter1}
+                  onChange={e => setSkillsFilter1(e.target.value)}
+                />
+                <select
+                  multiple
+                  className="border rounded-lg px-4 py-2 h-32 w-full"
+                  value={jobSeekerSearch.skills}
+                  onChange={e => {
+                    const selected = Array.from(e.target.selectedOptions, option => option.value);
+                    setJobSeekerSearch(prev => ({ ...prev, skills: selected }));
+                  }}
+                >
+                  {filteredJobSkills1.map((skill, index) => (
+                    <option key={index} value={skill}>
+                      {skill}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Province */}
+                <select
+                  className="border rounded-lg px-4 py-2"
+                  value={jobSeekerSearch.province}
+                  onChange={handleProvinceChange}
+                >
+                  <option value="">Select Province</option>
+                  {sriLankaProvinces.map((prov) => (
+                    <option key={prov.province} value={prov.province}>
+                      {prov.province}
+                    </option>
+                  ))}
+                </select>
+                {/* District */}
+                <select
+                  className="border rounded-lg px-4 py-2"
+                  value={jobSeekerSearch.district}
+                  onChange={(e) =>
+                    setJobSeekerSearch((prev) => ({
+                      ...prev,
+                      district: e.target.value,
+                    }))
+                  }
+                  disabled={!jobSeekerSearch.province}
+                >
+                  <option value="">Select District</option>
+                  {sriLankaProvinces
+                    .find((prov) => prov.province === jobSeekerSearch.province)
+                    ?.districts.map((dist) => (
+                      <option key={dist} value={dist}>
+                        {dist}
+                      </option>
+                    ))}
+                </select>
+                {/* City */}
+                <input
+                  type="text"
+                  placeholder="City"
+                  className="border rounded-lg px-4 py-2"
+                  value={jobSeekerSearch.city}
+                  onChange={(e) =>
+                    setJobSeekerSearch((prev) => ({
+                      ...prev,
+                      city: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="flex space-x-4 mt-4">
+                <button
+                  onClick={handleJobSeekerSearch}
+                  className="bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800"
+                  disabled={jobSeekerLoading}
+                >
+                  {jobSeekerLoading ? "Searching..." : "Search"}
+                </button>
+                <button
+                  onClick={resetJobSeekerSearch}
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                  disabled={jobSeekerLoading}
+                >
+                  Reset
+                </button>
+              </div>
+              {/* Results */}
+              {jobSeekerResults.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-lg font-semibold mb-4">
+                    Found {jobSeekerResults.length} JobSeeker(s)
+                  </h3>
+                  <div className="space-y-4">
+                    {jobSeekerResults.map((js) => (
+                      <div
+                        key={js._id}
+                        className="bg-gray-50 border rounded-lg shadow p-4 transition-all"
+                      >
+                        <div
+                          className="flex justify-between items-center cursor-pointer"
+                          onClick={() =>
+                            setExpandedJobSeeker(
+                              expandedJobSeeker === js._id ? null : js._id
+                            )
+                          }
+                        >
+                          <div>
+                            <span className="font-semibold text-green-800">
+                              {js.firstName} {js.lastName}
+                            </span>
+                            <span className="ml-2 text-gray-600">
+                              ({js.district})
+                            </span>
+                          </div>
+                          <button className="text-green-700 font-bold">
+                            {expandedJobSeeker === js._id ? "Hide" : "View"}
+                          </button>
+                        </div>
+                        {expandedJobSeeker === js._id && (
+                          <div className="mt-4 text-gray-700 space-y-2">
+                            <div>
+                              <strong>Email:</strong> {js.email}
+                            </div>
+                            <div>
+                              <strong>Phone:</strong> {js.phone}
+                            </div>
+                            <div>
+                              <strong>Province:</strong> {js.province}
+                            </div>
+                            <div>
+                              <strong>City:</strong> {js.location}
+                            </div>
+                            <div>
+                              <strong>Skills:</strong>{" "}
+                              {js.skills && js.skills.length > 0
+                                ? js.skills.join(", ")
+                                : "N/A"}
+                            </div>
+                            <div>
+                              <strong>Personal Summary:</strong>{" "}
+                              {js.personalSummary || "N/A"}
+                            </div>
+                            <div>
+                              <strong>Achievements:</strong>{" "}
+                              {js.achievements && js.achievements.length > 0
+                                ? js.achievements.join(", ")
+                                : "N/A"}
+                            </div>
+                            <div>
+                              <strong>Work Experiences:</strong>{" "}
+                              {js.workExperiences && js.workExperiences.length > 0
+                                ? js.workExperiences.join(", ")
+                                : "N/A"}
+                            </div>
+                            <div>
+                              <strong>Date of Birth:</strong>{" "}
+                              {js.dateOfBirth
+                                ? new Date(js.dateOfBirth).toLocaleDateString()
+                                : "N/A"}
+                            </div>
+                            <div>
+                              <strong>Gender:</strong> {js.gender}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {jobSeekerResults.length === 0 && jobSeekerLoading === false && (
+                <div className="mt-8 text-gray-500 text-center">
+                  No job seekers found.
+                </div>
+              )}
+            </div>
+          )}
+          {/* --- End Search JobSeekers Section --- */}
           {/* Search Bar */}
           <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Search Jobs</h2>
@@ -984,7 +1269,7 @@ const Jobs = () => {
                 ))}
               </select>
 
-              {/* Skills */}
+              {/* Skills
               <select
                 className="border rounded-lg px-4 py-2"
                 value={searchQuery.requiredSkills || ""}
@@ -998,8 +1283,49 @@ const Jobs = () => {
                     {skill}
                   </option>
                 ))}
+              </select> */}
+
+              {/* <select
+                multiple
+                className="border rounded-lg px-4 py-2 h-32"
+                value={searchQuery.requiredSkills ? searchQuery.requiredSkills.split(",") : []}
+                onChange={e => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value);
+                  setSearchQuery({ ...searchQuery, requiredSkills: selected.join(",") });
+                }}
+              >
+                {jobSkills.map((skill, index) => (
+                  <option key={index} value={skill}>
+                    {skill}
+                  </option>
+                ))}
+              </select> */}
+
+              <input
+                type="text"
+                placeholder="Type to filter skills"
+                className="border rounded-lg px-4 py-2 mb-2 w-full"
+                value={skillsFilter}
+                onChange={e => setSkillsFilter(e.target.value)}
+              />
+              <select
+                multiple
+                className="border rounded-lg px-4 py-2 h-32 w-full"
+                value={searchQuery.requiredSkills ? searchQuery.requiredSkills.split(",") : []}
+                onChange={e => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value);
+                  setSearchQuery({ ...searchQuery, requiredSkills: selected.join(",") });
+                }}
+              >
+                {filteredJobSkills.map((skill, index) => (
+                  <option key={index} value={skill}>
+                    {skill}
+                  </option>
+                ))}
               </select>
-      
+
+
+
 
 
               <select
@@ -1047,7 +1373,7 @@ const Jobs = () => {
                   setSearchQuery({ ...searchQuery, workType: e.target.value })
                 }
               >
-              
+
                 <option value="">Select Work Type</option>
                 {workTypes.map((type) => (
                   <option key={type} value={type}>
@@ -1083,7 +1409,7 @@ const Jobs = () => {
                 <option value="true">Yes</option>
                 <option value="false">No</option>
               </select>
-              
+
             </div>
             <div className="flex space-x-4 mt-4">
               <button

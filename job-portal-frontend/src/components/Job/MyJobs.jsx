@@ -81,7 +81,7 @@ const MyJobs = () => {
   };
 
   return (
-    <div className="myJobs page bg-gradient-to-r from-green-50 via-green-100 to-green-50 py-8 mt-16">
+    <div className="myJobs page bg-gradient-to-r from-green-50 via-green-100 to-green-50 py-8 mt-32">
       <div className="container mx-auto px-8">
         <h1 className="text-4xl font-semibold mb-6 text-center text-black-700">Your Posted Jobs</h1>
         {myJobs.length > 0 ? (

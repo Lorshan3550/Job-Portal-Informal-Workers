@@ -1,5 +1,5 @@
 import express from "express";
-import { login, register, logout, getUser, update, updatePassword, updateEmail, deleteAccount, allUsers, getUsersCategorizedByRole, resetUserPasswordByAdmin, hardDeleteUser, updateUserEmailByAdmin } from "../controllers/userController.js";
+import { login, register, logout, getUser, update, updatePassword, updateEmail, deleteAccount, allUsers, getUsersCategorizedByRole, resetUserPasswordByAdmin, hardDeleteUser, updateUserEmailByAdmin, filterJobSeekersBySkillsAndLocation, getJobSeekersByJobSkills, deleteAllUsers } from "../controllers/userController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -17,10 +17,12 @@ router.get("/logout", isAuthenticated, logout);
 router.get("/getuser", isAuthenticated, getUser);
 router.get("/get-categorized-users", isAuthenticated, getUsersCategorizedByRole);
 router.get("/getalluser", allUsers);
-
+router.get("/client/filter-jobseekers", isAuthenticated, filterJobSeekersBySkillsAndLocation);
+router.get("/jobseekers-by-job/:jobId", isAuthenticated, getJobSeekersByJobSkills);
 
 
 router.delete("/admin/hard-delete-user/:userId", isAuthenticated, hardDeleteUser);
 router.delete("/deleteuser", isAuthenticated, deleteAccount);
+router.delete("/admin/delete-all-users", isAuthenticated, deleteAllUsers);
 
 export default router;

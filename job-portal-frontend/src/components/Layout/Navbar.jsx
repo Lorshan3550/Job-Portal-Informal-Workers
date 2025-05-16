@@ -351,6 +351,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlineClose } from "react-icons/ai";
+import { FaRegNoteSticky } from "react-icons/fa6";
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
@@ -376,9 +377,9 @@ const Navbar = () => {
     <nav className="bg-green-900 text-white shadow-lg fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <img src="/logo.png" alt="logo" className="h-10" />
+        <div className="flex flex-col  items-center space-x-2">
           <span className="text-xl font-bold tracking-wide">JOBSPHERE</span>
+          <img src="/logo.png" alt="logo" className="h-10" />
         </div>
 
         {/* Hamburger Icon */}
@@ -490,23 +491,37 @@ const Navbar = () => {
           )}
 
           {(user?.role === 'JobSeeker' || user?.role === "Client") && (
-            <li>
-              <Link
-                to="/profile"
-                onClick={() => setShow(false)}
-                className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
-              >
-                PROFILE
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link
+                  to="/profile"
+                  onClick={() => setShow(false)}
+                  className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+                >
+                  PROFILE
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/notification"
+                  onClick={() => setShow(false)}
+                  className="block px-4 py-2 hover:bg-green-800 rounded-lg md:hover:bg-transparent md:hover:text-gray-200"
+                >
+                  NOTIFICATIONS
+
+                </Link>
+              </li>
+            </>
           )}
+
+
 
           {/* Auth Buttons */}
           {isAuthorized ? (
             <li>
               <button
                 onClick={handleLogout}
-                className="block px-4 py-2 bg-white text-green-900 rounded-lg hover:bg-green-200 transition duration-300"
+                className="block px-4 py-2 bg-white text-green-900 rounded-lg hover:bg-green-200 transition duration-300 text-center"
               >
                 LOGOUT
               </button>

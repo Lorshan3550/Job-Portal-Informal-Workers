@@ -4,7 +4,7 @@ import { User } from "../models/userSchema.js";
 import { sendToken } from "../utils/jwtToken.js";
 import ErrorHandler from "../middlewares/error.js";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
-import { sriLankaProvinces } from "../utils/commonVariables.js";
+import { sriLankaProvinces, jobSkills } from "../utils/commonVariables.js";
 import { Job } from "../models/jobSchema.js";
 import { Application } from "../models/applicationSchema.js";
 
@@ -27,12 +27,19 @@ export const register = catchAsyncErrors(async (req, res, next) => {
 
   // Validate province and district
   const selectedProvince = sriLankaProvinces.find((p) => p.province === province.toLowerCase())
-  if(!selectedProvince){
+  if (!selectedProvince) {
     return next(new ErrorHandler("Invalid province selected!", 400));
   }
 
-  if(!selectedProvince.districts.includes(district.toLowerCase())){
+  if (!selectedProvince.districts.includes(district.toLowerCase())) {
     return next(new ErrorHandler(`Invalid district selected for ${province} province!`, 400))
+  }
+
+  if(skills){
+    const invalidSkills = skills.filter((skill) => !jobSkills.includes(skill.toLowerCase()) )
+    if(invalidSkills.length > 0){
+      return next(new ErrorHandler(`Invalid Skill ${invalidSkills}`, 400))
+    }
   }
 
   const user = await User.create({
@@ -43,11 +50,11 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     email,
     phone,
     location,
-    province : province.toLowerCase(),
-    district : district.toLowerCase(),
-    skills : role === "JobSeeker" ? skills || [] : [], // Only JobSeeker can have skills
-    achievements : role === "JobSeeker" ? achievements || [] : [],
-    workExperiences : role === "JobSeeker" ? workExperiences || [] : [],
+    province: province.toLowerCase(),
+    district: district.toLowerCase(),
+    skills: role === "JobSeeker" ? skills || [] : [], // Only JobSeeker can have skills
+    achievements: role === "JobSeeker" ? achievements || [] : [],
+    workExperiences: role === "JobSeeker" ? workExperiences || [] : [],
     password,
     role,
     gender,
@@ -60,8 +67,8 @@ export const register = catchAsyncErrors(async (req, res, next) => {
 export const login = catchAsyncErrors(async (req, res, next) => {
 
   const { email, password } = req.body;
-  
-  if (!email || !password ) {
+
+  if (!email || !password) {
     return next(new ErrorHandler("Please provide email ,password and role !"));
   }
 
@@ -76,7 +83,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Invalid Email Or Password !", 400));
   }
-  
+
   sendToken(user, 201, res, "User Logged In Sucessfully !");
 });
 
@@ -84,7 +91,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 export const update = catchAsyncErrors(async (req, res, next) => {
   const { firstName, middleName, lastName, phone, province, district, skills, personalSummary, location, achievements, gender, dateOfBirth, workExperiences } = req.body;
   // const userId = req.user._id; // Assuming `req.user` is populated via authentication middleware
-  const {userId} = req.params;
+  const { userId } = req.params;
 
   // // Validate required fields
   // if (!firstName && !middleName && !lastName && !phone && !province && !district && !location) {
@@ -206,13 +213,13 @@ export const updateEmail = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Check if the email is valid
-  if(!validator.isEmail(email)){
+  if (!validator.isEmail(email)) {
     return next(new ErrorHandler("Please provide a valid email address!", 400));
   }
 
   // Check if the email is already registered
-  const existingUser = await User.findOne({email});
-  if(existingUser && existingUser._id.toString() !== userId.toString()){
+  const existingUser = await User.findOne({ email });
+  if (existingUser && existingUser._id.toString() !== userId.toString()) {
     return next(new ErrorHandler("This email is already registered with another account!", 400))
   }
 
@@ -252,7 +259,7 @@ export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
   // Delete user's related data after account deletion
 
   // Remove job data posted by client
-  if(user.role === "Client"){
+  if (user.role === "Client") {
     await Job.deleteMany({ postedBy: userId });
   }
 
@@ -414,3 +421,111 @@ export const updateUserEmailByAdmin = catchAsyncErrors(async (req, res, next) =>
   });
 });
 
+// Filter the all the JobSeekers by the Skills and (Province, District, Location(City)) by the Client
+export const filterJobSeekersBySkillsAndLocation = catchAsyncErrors(async (req, res, next) => {
+  // Only allow access for Clients
+  if (!req.user || req.user.role !== "Client") {
+    return next(new ErrorHandler("Only clients can access this resource.", 403));
+  }
+
+  const { skills, province, district, city } = req.query;
+
+  // Build the query object
+  const query = { role: "JobSeeker", isDeleted: false };
+
+  // Skills: support single or comma-separated multiple skills (OR condition)
+  if (skills) {
+    const skillsArray = Array.isArray(skills)
+      ? skills.map((s) => s.trim().toLowerCase())
+      : skills.split(",").map((s) => s.trim().toLowerCase());
+    query.skills = { $in: skillsArray };
+  }
+
+  // Province
+  if (province) {
+    const validProvince = sriLankaProvinces.find(
+      (prov) => prov.province === province.toLowerCase()
+    );
+    if (!validProvince) {
+      return next(new ErrorHandler("Invalid province.", 400));
+    }
+
+    query.province = province.toLowerCase();
+  }
+
+  // District
+  if (district) {
+      const validDistrict = sriLankaProvinces.find(
+        (prov) => prov.districts.includes(district.toLowerCase())
+      );
+      if (!validDistrict) {
+        return next(
+          new ErrorHandler(
+            `Invalid district: ${district}`,
+            400
+          )
+        );
+      }
+    query.district = district.toLowerCase();
+    }
+
+  // City (location)
+  if (city) {
+    query.location = { $regex: city, $options: "i" };
+  }
+
+  // Fetch matching JobSeekers
+  const jobSeekers = await User.find(query).select("-password -passwordResetToken -passwordResetExpires");
+
+  res.status(200).json({
+    success: true,
+    count: jobSeekers.length,
+    jobSeekers,
+  });
+})
+
+export const getJobSeekersByJobSkills = catchAsyncErrors(async (req, res, next) => {
+  const { jobId } = req.params;
+
+  // Validate if the job exists and is admin-approved
+  const job = await Job.findOne({ _id: jobId, adminApproval: true });
+  if (!job) {
+    return next(new ErrorHandler("Job not found or not approved by admin.", 404));
+  }
+
+  // Extract requiredSkills from the job
+  const { requiredSkills } = job;
+
+  if (!requiredSkills || requiredSkills.length === 0) {
+    return next(new ErrorHandler("The job does not have any required skills.", 400));
+  }
+
+  // Find JobSeekers whose skills match at least one of the requiredSkills
+  const jobSeekers = await User.find({
+    role: "JobSeeker",
+    isDeleted: false,
+    skills: { $in: requiredSkills.map(skill => skill.toLowerCase()) },
+  }).select("-password -passwordResetToken -passwordResetExpires");
+
+  res.status(200).json({
+    success: true,
+    count: jobSeekers.length,
+    jobSeekers,
+  });
+});
+
+// Delete All Users
+export const deleteAllUsers = catchAsyncErrors(async (req, res, next) => {
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can delete all users.", 403));
+  }
+
+  // Delete all users
+  await User.deleteMany();
+
+  res.status(200).json({
+    success: true,
+    message: "All users have been deleted successfully.",
+  });
+});

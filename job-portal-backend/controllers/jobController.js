@@ -3,6 +3,8 @@ import { Job } from "../models/jobSchema.js";
 import ErrorHandler from "../middlewares/error.js";
 import { sriLankaProvinces, workTypes, jobCategories, jobExperience, jobSkills } from "../utils/commonVariables.js";
 import validator from "validator";
+import { sendEmail, sendJobApprovalEmailContent } from "../utils/emailHandling.js";
+import { User } from "../models/userSchema.js";
 
 // Get All Jobs - 
 export const getAllJobs = catchAsyncErrors(async (req, res, next) => {
@@ -388,6 +390,10 @@ export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Job not found.", 404));
   }
 
+  // Find the posted User baseb on the job postedBy field
+  const user = await User.find({_id : job.postedBy})
+  console.log("user -> ", user)
+
   // If adminApproval is false, validate the reasonForRejection field
   if (!adminApproval && (!reasonForRejection || reasonForRejection.trim() === "")) {
     return next(new ErrorHandler("Reason for rejection is required when adminApproval is false.", 400));
@@ -397,6 +403,25 @@ export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
   job.adminApproval = adminApproval;
   job.reasonForRejection = adminApproval ? null : reasonForRejection; // Clear reason if approved
   await job.save();
+
+  // if(job.adminApproval){
+  //   const emailContent = sendJobApprovalEmailContent(user[0], job, true); // for approval
+  //   console.log("Email Content -> ", emailContent)
+  //   const emailResponse = await sendEmail(user[0].email, "Job Approved Notice", emailContent);
+  //   console.log(emailResponse)
+  //       if (!emailResponse.success) {
+  //         return next(new ErrorHandler("Failed to Approve the job", 400));
+  //       }
+  // }
+  // else{
+  //   const emailContentRejected = sendJobApprovalEmailContent(user[0], job, false, reasonForRejection); // for rejection
+  //   const emailResponse = await sendEmail(user[0].email, "Job Rejected Notice", emailContentRejected);
+  //       if (!emailResponse.success) {
+  //         return next(new ErrorHandler("Failed to Reject the job", 400));
+  //       }
+  // }
+
+
 
   res.status(200).json({
     success: true,
@@ -459,8 +484,6 @@ export const getSingleJob = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-
-
 // Fetch all admin approved jobs categorized by the categories.
 export const getApprovedJobsByCategory = catchAsyncErrors(async (req, res, next) => {
   try {
@@ -471,13 +494,13 @@ export const getApprovedJobsByCategory = catchAsyncErrors(async (req, res, next)
     const sortedCategories = jobCategories.sort((a, b) => a.name.localeCompare(b.name))
 
     // Initialize the categorizedJobs object with all categories from jobCategories
-    const categorizedJobs = jobCategories.reduce((acc, category) => {
+    const categorizedJobs = sortedCategories.reduce((acc, category) => {
       acc[category.name] = { jobs: [], count: 0 };
       return acc;
     }, {});
 
     // Add a custom "All category"
-    categorizedJobs['All'] = { jobs: approvedJobs, count: approvedJobs.length };
+    // categorizedJobs['All'] = { jobs: approvedJobs, count: approvedJobs.length };
 
     // console.log("Categorized Jobs : ", categorizedJobs)
 
@@ -526,7 +549,6 @@ export const getApprovedJobsByCategory = catchAsyncErrors(async (req, res, next)
     return next(new ErrorHandler("Failed to fetch categorized jobs.", 500));
   }
 });
-
 
 // Search all the admin appproved by different fields in the jobSchema.
 export const searchApprovedJobs = catchAsyncErrors(async (req, res, next) => {

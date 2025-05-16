@@ -4,12 +4,17 @@ import { RiLock2Fill, RiEyeFill, RiEyeCloseFill } from "react-icons/ri";
 import { Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useContext } from "react";
+import { Context } from "../../main";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isAdminAuthorized, setIsAdminAuthorized] = useState(false);
+  const { setUser , setIsAuthorized} = useContext(Context);
+  
+
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -28,6 +33,8 @@ const AdminLogin = () => {
       setEmail("");
       setPassword("");
       setIsAdminAuthorized(true);
+      setUser(data.user);
+      setIsAuthorized(true);
     } catch (error) {
       console.error("Error:", error.response?.data?.message || "Login failed");
       toast.error(error.response?.data?.message || "Invalid credentials");

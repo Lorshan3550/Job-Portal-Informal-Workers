@@ -1,5 +1,5 @@
 import express from "express";
-import { postReview, getAllReviews, getUserReviews , getUserReviewsById, getReviewsByJobId, updateReview, deleteReview, updateReviewFlag, getReviewById, getApprovedReviews, updateAdminApproval, deleteReviewByAdmin} from "../controllers/reviewController.js";
+import { postReview, getAllReviews, getUserReviews , getUserReviewsById, getReviewsByJobId, updateReview, deleteReview, updateReviewFlag, getReviewById, getApprovedReviews, updateAdminApproval, deleteReviewByAdmin, deleteAllReviews} from "../controllers/reviewController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -38,6 +38,8 @@ router.delete("/delete-review/:reviewId", isAuthenticated, deleteReviewByAdmin);
 router.put("/flag/:reviewId", isAuthenticated, updateReviewFlag);
 
 router.put("/review/adminApproval/:reviewId", isAuthenticated, updateAdminApproval)
+
+router.delete("/admin/delete-all-reviews", isAuthenticated, deleteAllReviews);
 
 
 // // Get all reviews for a specific user (Authenticated)

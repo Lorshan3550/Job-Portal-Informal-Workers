@@ -2,11 +2,17 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaCheck, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { Context } from "../../main";
+import { useContext } from "react";
 
 const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [filter, setFilter] = useState("all"); // Filter: all, approved, rejected
   const [expandedJobId, setExpandedJobId] = useState(null); // Track expanded job
+  // const { user: admin } = useContext(Context);
+  // localStorage.setItem("admin", JSON.stringify(admin));
+  // const adminData = localStorage.getItem("admin");
+  // const parsedAdmin = JSON.parse(adminData);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -15,6 +21,7 @@ const ManageJobs = () => {
           withCredentials: true,
         });
         setJobs(data.jobs);
+        // console.log("Admin -> ", admin)
       } catch (error) {
         console.error("Error fetching jobs:", error);
       }
@@ -25,11 +32,63 @@ const ManageJobs = () => {
 
   const handleApprove = async (jobId) => {
     try {
+      // Approve the job
       await axios.put(
-        `http://localhost:4000/api/v1/job/update-approval/${jobId}`,
+        `http://localhost:4000/api/v1/admin/update-approval/${jobId}`,
         { adminApproval: true },
         { withCredentials: true }
       );
+
+      // Fetch the approved job details
+      const { data: jobData } = await axios.get(
+        `http://localhost:4000/api/v1/job/${jobId}`,
+        { withCredentials: true }
+      );
+
+      const { postedBy, requiredSkills, title } = jobData.job;
+
+      // Create a notification for the Client
+      await axios.post(
+        "http://localhost:4000/api/v1/notification/create-notification",
+        {
+          receiver: postedBy,
+          receiverModel: "User",
+          about: "Job Posting",
+          title: "Your Job Has Been Approved!",
+          description: `Your job titled "${title}" has been approved by the admin.`,
+        },
+        { withCredentials: true }
+      );
+
+      // Find JobSeekers whose skills match the job's requiredSkills
+      const { data: jobSeekersData } = await axios.get(
+        `http://localhost:4000/api/v1/user/jobseekers-by-job/${jobId}`,
+        { withCredentials: true }
+      );
+
+      console.log("Job Seekers length -> ", jobSeekersData)
+
+      if (jobSeekersData.jobSeekers.length) {
+        // Create notifications for each matching JobSeeker
+        const jobSeekerNotifications = jobSeekersData.jobSeekers.map((jobSeeker) =>
+          axios.post(
+            "http://localhost:4000/api/v1/notification/create-notification",
+            {
+              receiver: jobSeeker._id,
+              receiverModel: "User",
+              about: "Job Posting",
+              title: "New Job Opportunity!",
+              description: `A new job titled "${title}" matches your skills. Check it out!`,
+            },
+            { withCredentials: true }
+          )
+        );
+
+        await Promise.all(jobSeekerNotifications);
+
+      }
+
+
       setJobs((prevJobs) =>
         prevJobs.map((job) =>
           job._id === jobId ? { ...job, adminApproval: true, reasonForRejection: null } : job
@@ -50,11 +109,35 @@ const ManageJobs = () => {
     }
 
     try {
+      // Reject the job
       await axios.put(
-        `http://localhost:4000/api/v1/job/update-approval/${jobId}`,
+        `http://localhost:4000/api/v1/admin/update-approval/${jobId}`,
         { adminApproval: false, reasonForRejection },
         { withCredentials: true }
       );
+
+      // Fetch the rejected job details
+      const { data: jobData } = await axios.get(
+        `http://localhost:4000/api/v1/job/${jobId}`,
+        { withCredentials: true }
+      );
+
+      const { postedBy, title } = jobData.job;
+
+      // Create a notification for the Client
+      await axios.post(
+        "http://localhost:4000/api/v1/notification/create-notification",
+        {
+          receiver: postedBy,
+          receiverModel: "User",
+          about: "Job Posting",
+          title: "Your Job Has Been Rejected",
+          description: `Your job titled "${title}" has been rejected by the admin. Reason: ${reasonForRejection}`,
+        },
+        { withCredentials: true }
+      );
+
+
       setJobs((prevJobs) =>
         prevJobs.map((job) =>
           job._id === jobId ? { ...job, adminApproval: false, reasonForRejection } : job
@@ -85,25 +168,22 @@ const ManageJobs = () => {
       <div className="flex space-x-4 mb-6">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-lg ${
-            filter === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
-          }`}
+          className={`px-4 py-2 rounded-lg ${filter === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+            }`}
         >
           All Jobs
         </button>
         <button
           onClick={() => setFilter("approved")}
-          className={`px-4 py-2 rounded-lg ${
-            filter === "approved" ? "bg-green-600 text-white" : "bg-gray-200 text-gray-800"
-          }`}
+          className={`px-4 py-2 rounded-lg ${filter === "approved" ? "bg-green-600 text-white" : "bg-gray-200 text-gray-800"
+            }`}
         >
           Approved
         </button>
         <button
           onClick={() => setFilter("rejected")}
-          className={`px-4 py-2 rounded-lg ${
-            filter === "rejected" ? "bg-red-600 text-white" : "bg-gray-200 text-gray-800"
-          }`}
+          className={`px-4 py-2 rounded-lg ${filter === "rejected" ? "bg-red-600 text-white" : "bg-gray-200 text-gray-800"
+            }`}
         >
           Rejected
         </button>
@@ -123,11 +203,10 @@ const ManageJobs = () => {
                 <p className="text-gray-600">{job.category}</p>
                 <p className="text-sm font-semibold">
                   <span
-                    className={`px-2 py-1 rounded-lg ${
-                      job.adminApproval
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
+                    className={`px-2 py-1 rounded-lg ${job.adminApproval
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                      }`}
                   >
                     {job.adminApproval ? "Approved" : "Not Approved"}
                   </span>

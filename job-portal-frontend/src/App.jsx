@@ -118,6 +118,7 @@ import UpdateReview from "./components/Review/UpdateReview";
 import MyReview from "./components/Review/MyReview";
 import Review from "./components/Review/Review";
 import ManageReviews from "./components/Admin/ManageReviews";
+import Notification from "./components/Notifications/Notification";
 
 const App = () => {
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
@@ -183,6 +184,8 @@ const App = () => {
         <Route path="/review/me" element={<MyReview />} />
         <Route path="/review/post" element={<PostReview/>} />
         <Route path="/review/update/:reviewId" element={<UpdateReview />} />
+        <Route path="/notification" element={<Notification />} />
+
 
         <Route path="*" element={<NotFound />} />
       </Routes>

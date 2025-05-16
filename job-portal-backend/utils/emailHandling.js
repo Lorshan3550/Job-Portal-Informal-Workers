@@ -154,3 +154,68 @@ export const sendEmailContent = (user, resetCode) => {
       
 }
   
+
+
+export const sendJobApprovalEmailContent = (user, job, adminApproval, reasonForRejection = "") => {
+  const isApproved = adminApproval === true;
+  const statusColor = isApproved ? "#22BC66" : "#E74C3C";
+  const statusText = isApproved ? "APPROVED" : "REJECTED";
+  const introText = isApproved
+    ? `<p style="font-size: 16px; text-align: center;">
+        Congratulations <strong>${user.firstName}</strong>, your job posting <strong>"${job.title}"</strong> has been <span style="color:${statusColor}; font-weight:bold;">APPROVED</span> by the admin.
+      </p>`
+    : `<p style="font-size: 16px; text-align: center;">
+        Hello <strong>${user.firstName}</strong>, unfortunately your job posting <strong>"${job.title}"</strong> has been <span style="color:${statusColor}; font-weight:bold;">REJECTED</span> by the admin.
+      </p>`;
+
+  const rejectionReason = !isApproved && reasonForRejection
+    ? `<div style="background-color:#fff3cd; color:#856404; border-radius:6px; padding:12px 20px; margin:20px 0; text-align:center;">
+        <strong>Reason for Rejection:</strong><br/>${reasonForRejection}
+      </div>`
+    : "";
+
+  const actionButton = isApproved
+    ? {
+        color: "#22BC66",
+        text: "View Job Posting",
+        link: `http://localhost:5173/job/${job._id}`,
+      }
+    : {
+        color: "#E74C3C",
+        text: "Edit & Resubmit Job",
+        link: `http://localhost:5173/job/edit/${job._id}`,
+      };
+
+  const emailContent = {
+    body: {
+      name: user.firstName,
+      intro: `
+        <div style="background-color:#f4f4f4; padding: 20px; border-radius: 10px;">
+          <h2 style="color: ${statusColor}; text-align: center;">📢 Job Approval Update</h2>
+          ${introText}
+          ${rejectionReason}
+        </div>
+      `,
+      action: {
+        instructions: `
+          <div style="text-align: center; font-size: 18px; margin-top: 10px;">
+            <strong>Job Status: <span style="color:${statusColor};">${statusText}</span></strong>
+          </div>
+        `,
+        button: actionButton,
+      },
+      outro: `
+        <div style="text-align: center; font-size: 14px; color: #555; margin-top: 20px;">
+          If you have questions, please contact our support team.
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+          <a href="mailto:support@yourjobportal.com" style="color: #2D89EF; text-decoration: none; font-weight: bold;">
+            Contact Support
+          </a>
+        </div>
+      `,
+    },
+  };
+
+  return emailContent;
+};

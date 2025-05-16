@@ -93,11 +93,11 @@ export const jobSkills = [
    "Barbering",
    "Makeup Application",
    "Beauty Treatments",
-          "Spa Therapies",
-          "Event Decoration",
-          "Catering",
-          "Photography",
-          "Floral Arranging",
+   "Spa Therapies",
+   "Event Decoration",
+   "Catering",
+   "Photography",
+   "Floral Arranging",
           "Music/DJ Services",
           "Appliance Repair",
           "Mobile Phone Repair",
@@ -140,12 +140,20 @@ export const jobSkills = [
           "Pet Sitting",
           "Shoe Repair",
           "Cobbling",
+          "Plumbing",
+        "Electrical Work",
+        "Carpentry",
+        "Masonry",
+        "Painting",
+        "Welding",
+        "Tiling",
+        "Heating, Ventilation, and Air Conditioning (HVAC)",
           "Other"
 
         
 
 
-].map((skill) => skill.toLowerCase());
+].map((skill) => skill.toLowerCase())
 
   export const jobCategories = [
     {

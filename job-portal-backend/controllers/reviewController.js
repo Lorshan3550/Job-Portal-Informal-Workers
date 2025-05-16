@@ -901,3 +901,20 @@ export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
     review,
   });
 });
+
+
+// Delete All Reviews
+export const deleteAllReviews = catchAsyncErrors(async (req, res, next) => {
+  // Ensure the request is made by an admin
+  if (!req.admin) {
+    return next(new ErrorHandler("Only admins can delete all reviews.", 403));
+  }
+
+  // Delete all reviews
+  await Review.deleteMany();
+
+  res.status(200).json({
+    success: true,
+    message: "All reviews have been deleted successfully.",
+  });
+});

@@ -10,28 +10,6 @@ const ResetPassword = () => {
 
   const navigate = useNavigate(); // Hook for navigation
 
-  // const handleResetPassword = (e) => {
-  //   e.preventDefault();
-
-  //   if (!password || !confirmPassword) {
-  //     setMessage("Please fill in all fields.");
-  //     return;
-  //   }
-
-  //   if (password !== confirmPassword) {
-  //     setMessage("Passwords do not match.");
-  //     return;
-  //   }
-
-  //   // Simulate password reset success
-  //   setMessage("Your password has been reset successfully!");
-
-  //   // Redirect to login page after 2 seconds
-  //   setTimeout(() => {
-  //     navigate("/login");
-  //   }, 2000);
-  // };
-
   const handleResetPassword = async (e) => {
     e.preventDefault();
   

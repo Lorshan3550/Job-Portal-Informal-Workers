@@ -299,18 +299,6 @@ const Application = () => {
               {errors.location && <p className="text-red-500 text-sm">{errors.location}</p>}
             </div>
 
-            {/* <div>
-              <input
-                type="text"
-                name="educationQualifications"
-                placeholder="Education Qualifications"
-                value={formData.educationQualifications}
-                onChange={handleChange}
-                className="input-field"
-              />
-              {errors.educationQualifications && <p className="text-red-500 text-sm">{errors.educationQualifications}</p>}
-            </div> */}
-
             <div>
               <select
                 name="educationQualifications"
@@ -471,14 +459,7 @@ const Application = () => {
               )}
             </div>
           ))}
-
-
-          {/* Resume Upload
-          <div>
-            <input type="file" accept=".pdf,.jpeg,.png" onChange={handleFileChange} className="input-field" />
-            {errors.resume && <p className="text-red-500 text-sm">{errors.resume}</p>}
-          </div> */}
-
+          
           {/* Resume Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

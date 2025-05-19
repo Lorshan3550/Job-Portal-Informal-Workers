@@ -9,11 +9,9 @@ import adminRouter from "./routes/adminRoutes.js";
 import fileRouter from "./routes/fileRoutes.js"
 import notificationRouter from "./routes/notificationRoutes.js"
 import dotenv from 'dotenv'
-// import { config } from "dotenv";
 import cors from "cors";
 import ErrorHandler, { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
-// import fileUpload from "express-fileupload";
 import multer from "multer";
 import axios from "axios";
 import bodyParser from "body-parser";
@@ -21,11 +19,8 @@ import bodyParser from "body-parser";
 
 dotenv.config({path: "./config/config.env"})
 
-
 // Create express server 
 const app = express();
-// config({ path: "./config/config.env" });
-
 
 app.use(
   cors({
@@ -44,14 +39,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(
-//   fileUpload({
-//     useTempFiles: true,
-//     tempFileDir: "/tmp/",
-//   })
-// );
-
-
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/auth", authRouter);
@@ -61,8 +48,6 @@ app.use("/api/v1/application", applicationRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/notification", notificationRouter);
-
-
 
 
 dbConnection();

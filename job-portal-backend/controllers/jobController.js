@@ -186,12 +186,6 @@ export const postJob = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  // console.log("Province and District Validation Passed");
-
-  // console.log("Before URL Validation");
-
-  // console.log("Photos: ", photos);
-
   // Validate photos
   if (photos && photos.some((photo) => !photo.url.startsWith("http") || !photo.secure_url.startsWith("https"))) {
     return next(
@@ -264,15 +258,7 @@ export const getMyJobs = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// // Get Questions of posted job 
-// export const getQuestionsOfJob = catchAsyncErrors(async (req, res, next) => {
-//   const {id} = req.params;
-//   const job = await Job.findOne(id);
-//   res.status(200).json({
-//     success: true,
-//     Questions : job.questions,
-//   });
-// });
+
 
 export const updateJob = catchAsyncErrors(async (req, res, next) => {
   const { role } = req.user;
@@ -339,36 +325,6 @@ export const updateJob = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
-//   const { id } = req.params; // Job ID from the request parameters
-//   const { adminApproval } = req.body; // New admin approval status from the request body
-
-//   // Ensure the request is made by an admin
-//   if (!req.admin) {
-//     return next(new ErrorHandler("Only admins can update job approval status.", 403));
-//   }
-
-//   // Validate the adminApproval field
-//   if (typeof adminApproval !== "boolean") {
-//     return next(new ErrorHandler("Invalid value for adminApproval. It must be true or false.", 400));
-//   }
-
-//   // Find the job by ID
-//   const job = await Job.findById(id);
-//   if (!job) {
-//     return next(new ErrorHandler("Job not found.", 404));
-//   }
-
-//   // Update the adminApproval field
-//   job.adminApproval = adminApproval;
-//   await job.save();
-
-//   res.status(200).json({
-//     success: true,
-//     message: `Job approval status updated to ${adminApproval ? "approved" : "not approved"}.`,
-//     job,
-//   });
-// });
 
 export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params; // Job ID from the request parameters
@@ -404,22 +360,6 @@ export const updateAdminApproval = catchAsyncErrors(async (req, res, next) => {
   job.reasonForRejection = adminApproval ? null : reasonForRejection; // Clear reason if approved
   await job.save();
 
-  // if(job.adminApproval){
-  //   const emailContent = sendJobApprovalEmailContent(user[0], job, true); // for approval
-  //   console.log("Email Content -> ", emailContent)
-  //   const emailResponse = await sendEmail(user[0].email, "Job Approved Notice", emailContent);
-  //   console.log(emailResponse)
-  //       if (!emailResponse.success) {
-  //         return next(new ErrorHandler("Failed to Approve the job", 400));
-  //       }
-  // }
-  // else{
-  //   const emailContentRejected = sendJobApprovalEmailContent(user[0], job, false, reasonForRejection); // for rejection
-  //   const emailResponse = await sendEmail(user[0].email, "Job Rejected Notice", emailContentRejected);
-  //       if (!emailResponse.success) {
-  //         return next(new ErrorHandler("Failed to Reject the job", 400));
-  //       }
-  // }
 
 
 
@@ -582,46 +522,7 @@ export const searchApprovedJobs = catchAsyncErrors(async (req, res, next) => {
       query.category = category;
     }
 
-    // // Validate and filter by requiredSkills
-    // if (requiredSkills) {
-    //   const skillsArray = requiredSkills.split(",").map((skill) => skill.trim());
-    //   const invalidSkills = skillsArray.filter((skill) => !jobSkills.includes(skill));
-    //   if (invalidSkills.length > 0) {
-    //     return next(
-    //       new ErrorHandler(
-    //         `Invalid skills: ${invalidSkills.join(", ")}. Please provide valid skills.`,
-    //         400
-    //       )
-    //     );
-    //   }
-    //   query.requiredSkills = { $all: skillsArray }; // Match all skills in the array
-    // }
-
-    // Validate and filter by requiredSkills
-    // if (requiredSkills) {
-    //   const skillsArray = requiredSkills
-    //     .split(",")
-    //     .map((skill) => skill.trim().toLowerCase()); // Convert skills to lowercase
-
-    //   // console.log("Skills Array : ", skillsArray)
-
-    //   const invalidSkills = skillsArray.filter((skill) => !jobSkills.includes(skill));
-    //   if (invalidSkills.length > 0) {
-    //     return next(
-    //       new ErrorHandler(
-    //         `Invalid skills: ${invalidSkills.join(", ")}. Please provide valid skills.`,
-    //         400
-    //       )
-    //     );
-    //   }
-
-    //   query.requiredSkills = { $all: skillsArray }; // Match all skills in the array
-
-    //   const Qjobs = await Job.find({requiredSkills: 'farm work'});
-
-    //   console.log(Qjobs)
-
-    // }
+    
 
     // Validate and filter by requiredSkills
     if (requiredSkills) {

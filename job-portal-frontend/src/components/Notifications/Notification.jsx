@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// const Notification = () => {
-//   return (
-//     <div>Notification</div>
-//   )
-// }
-
-// export default Notification
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 

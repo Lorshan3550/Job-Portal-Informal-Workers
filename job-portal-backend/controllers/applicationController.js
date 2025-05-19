@@ -80,13 +80,6 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("job has already closed or expired", 403));
   }
 
-  // console.log("resume : ", resume)
-  // console.log("resume public Id : ", resume.public_id)
-  // console.log("resume url  : ", resume.url)
-  // console.log("resume secure url : ", resume.secure_url)
-
-
-
   // Validate resume if job requires a CV
   if (job.isCVRequired && (!resume || !resume.public_id || !resume.url || !resume.secure_url)) {
     return next(
@@ -220,16 +213,6 @@ export const clientGetAllApplications = catchAsyncErrors(
       };
     });
 
-    // // Find all the applications
-    // const applications = await Application.find();
-
-    // // Filter the applications based on the jobIds of every job
-    // const filteredApplications = applications.filter((application) => {
-    //   return jobs.map((job) => job._id.toString() === application.jobId.toString())
-    // })
-
-    // console.log("applications : ", applications)
-
     //const applications = await Application.find({ "workerId": _id });
     res.status(200).json({
       success: true,
@@ -243,11 +226,7 @@ export const clientGetAllApplications = catchAsyncErrors(
 export const jobseekerGetAllApplications = catchAsyncErrors(
   async (req, res, next) => {
     const { role } = req.user;
-    // if (role === "Clin") {
-    //   return next(
-    //     new ErrorHandler("JobSeeker not allowed to access this resource.", 400)
-    //   );
-    // }
+   
     const { _id } = req.user;
     const applications = await Application.find({ "workerId": _id });
     res.status(200).json({
@@ -522,10 +501,7 @@ export const jobseekerGetApprovedApplications = catchAsyncErrors(async (req, res
     .populate("workerId", "firstName lastName email phone gender"); // Populate worker details
 
   if (!applications.length) {
-    // return res.status(404).json({
-    //   success: false,
-    //   message: "No applications found for this jobseeker.",
-    // });
+    
     return next(new ErrorHandler("No applications found for this jobseeker.", 404));
   }
 
@@ -535,10 +511,6 @@ export const jobseekerGetApprovedApplications = catchAsyncErrors(async (req, res
   );
 
   if (!approvedApplications.length) {
-    // return res.status(404).json({
-    //   success: false,
-    //   message: "No applications found for admin-approved jobs.",
-    // });
     return next(new ErrorHandler("No applications found for admin-approved jobs.", 404));
 
   }

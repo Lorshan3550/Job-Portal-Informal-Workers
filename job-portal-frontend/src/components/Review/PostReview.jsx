@@ -108,7 +108,7 @@ const PostReview = () => {
   };
 
   return (
-    <section className="min-h-screen py-16 px-6 bg-gradient-to-r from-green-50 via-green-100 to-green-50">
+    <section className="min-h-screen py-16 px-6 bg-gradient-to-r from-green-50 via-green-100 to-green-50 mt-16">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-semibold text-gray-800">Post a Review</h1>

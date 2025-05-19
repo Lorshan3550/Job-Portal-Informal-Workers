@@ -9,10 +9,6 @@ const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [filter, setFilter] = useState("all"); // Filter: all, approved, rejected
   const [expandedJobId, setExpandedJobId] = useState(null); // Track expanded job
-  // const { user: admin } = useContext(Context);
-  // localStorage.setItem("admin", JSON.stringify(admin));
-  // const adminData = localStorage.getItem("admin");
-  // const parsedAdmin = JSON.parse(adminData);
 
   useEffect(() => {
     const fetchJobs = async () => {

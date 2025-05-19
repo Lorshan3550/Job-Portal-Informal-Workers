@@ -2,55 +2,6 @@ import nodemailer from "nodemailer";
 import Mailgen from "mailgen";
 import dotenv from "dotenv";
 
-// export const sendEmail = async (email, subject, emailContent, res, message) => {
-//   try {
-//     // Nodemailer configuration
-//     let config = {
-//       service: "gmail",
-//       auth: {
-//         user: process.env.GMAIL_APP_USER,
-//         pass: process.env.GMAIL_APP_PASSWORD,
-//       },
-//     };
-
-//     console.log(" Config for send Email :  ", config)
-
-//     let transporter = nodemailer.createTransport(config);
-
-//     // Mailgen configuration
-//     let MailGenerator = new Mailgen({
-//       theme: "default",
-//       product: {
-//         name: "Job Portal",
-//         link: "https://mailgen.js/",
-//       },
-//     });
-
-//     // Generate email body using Mailgen
-//     let mailBody = MailGenerator.generate(emailContent);
-
-//     // Email message
-//     let messageOptions = {
-//       from: process.env.GMAIL_APP_USER,
-//       to: email,
-//       subject: subject,
-//       html: mailBody,
-//     };
-
-//     // Send the email
-//     const info = await transporter.sendMail(messageOptions);
-
-//     res.status(200).json({
-//       success: true,
-//       message: message || "Email sent successfully!",
-//       emailInfo: info.messageId,
-//       preview: nodemailer.getTestMessageUrl(info),
-//     });
-//   } catch (error) {
-//     console.error("Error sending email:", error);
-//     res.status(500).json({ success: false, message: "Email sending failed!" });
-//   }
-// };
 
 
 export const sendEmail = async (email, subject, emailContent) => {

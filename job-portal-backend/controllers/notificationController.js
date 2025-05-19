@@ -49,12 +49,6 @@ export const createNotification = catchAsyncErrors(async (req, res, next) => {
         }
     }
 
-
-
-    // console.log(sender === req.admin._id.toString(), sender, req.admin._id.toString());
-
-
-
     if (!senderDoc) {
         return next(new ErrorHandler("Sender not found.", 404));
     }

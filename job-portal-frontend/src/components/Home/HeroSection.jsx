@@ -9,12 +9,6 @@ const HeroSection = () => {
       subTitle: "Live Job",
       icon: <FaSuitcase className="text-4xl text-green-600" />,
     },
-    // {
-    //   id: 2,
-    //   title: "91,220",
-    //   subTitle: "Companies",
-    //   icon: <FaBuilding className="text-4xl text-blue-600" />,
-    // },
     {
       id: 3,
       title: "2,34,200",

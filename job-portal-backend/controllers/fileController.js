@@ -6,23 +6,6 @@ export const uploadResume = catchAsyncErrors(async (req, res, next) => {
     return res.status(400).json({ error: "No file uploaded!" });
   }
 
-//   console.log("Cloudinary Config:");
-//   console.log({
-//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET,
-// });
-
-  // cloudinary.v2.config().cloud_name = process.env.CLOUDINARY_CLOUD_NAME
-  // cloudinary.v2.config().api_key = process.env.CLOUDINARY_API_KEY
-  // cloudinary.v2.config().api_secret= process.env.CLOUDINARY_API_SECRET
-
-  
-  
-  // console.log("File:", req.file);
-  // console.log("cloud name : ", cloudinary.v2.config().api_key)
-  // console.log("Cloudinary Config:", cloudinary.v2.config());  
-
   cloudinary.v2.uploader.upload_stream(
     { resource_type: "auto", folder: "resumes" },
     (error, result) => {

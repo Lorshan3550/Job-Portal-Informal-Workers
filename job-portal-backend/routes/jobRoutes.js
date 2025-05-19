@@ -21,24 +21,21 @@ const router = express.Router();
 
 router.get("/getall", getAllJobs);
 router.get("/getallapprovedjobs", getApprovedJobs);
-
 router.get("/getallnonapprovedjobs", getNonApprovedJobs);
 router.get("/getallwithrejectionlogic", getAllJobsWithRejectionLogic);
-
-
-router.post("/post", isAuthenticated, postJob);
-
+router.get("/:id", getSingleJob);
 router.get("/getmyjobs", isAuthenticated, getMyJobs);
 router.get("/approved-jobs-by-category", getApprovedJobsByCategory);
 router.get("/search-approved-jobs", searchApprovedJobs);
 router.get("/recommended-jobs", isAuthenticated, getRecommendedJobs);
+
+router.post("/post", isAuthenticated, postJob);
 
 router.put("/update/:id", isAuthenticated, updateJob);
 router.put("/update-approval/:id", isAuthenticated, updateAdminApproval);
 
 router.delete("/delete/:id", isAuthenticated, deleteJob);
 router.delete("/deleteall", deleteAllJobs); // Ensure workers cannot access this resource
-router.get("/:id", getSingleJob);
 
 export default router;
 

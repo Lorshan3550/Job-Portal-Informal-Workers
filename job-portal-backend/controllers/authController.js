@@ -19,10 +19,6 @@ export const sendPasswordResetCode = catchAsyncErrors(async (req, res, next) => 
       return next(new ErrorHandler("User with this email does not exist.", 404));
     }
 
-    // const resetCode = crypto.randomBytes(3).toString("hex").toUpperCase();
-    // user.passwordResetToken = bcrypt.hashSync(resetCode, 10);
-    // user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-
     const resetCode = user.createPasswordResetToken();
   
     await user.save({ validateBeforeSave: false });
@@ -81,11 +77,6 @@ export const verifyResetCode = catchAsyncErrors(async (req, res, next) => {
     if (!isValidCode) {
       return next(new ErrorHandler("Invalid verification code.", 400));
     }
-
-    // res.cookie("resetToken", "", {
-    //     httpOnly: true,
-    //     expires: new Date(Date.now()),
-    // })
 
     res.clearCookie("resetToken");
 

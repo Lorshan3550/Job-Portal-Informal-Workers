@@ -287,16 +287,6 @@ const Register = () => {
           {/* Skills */}
           {role === "JobSeeker" && (
             <div className="mb-4 col-span-2">
-              {/* <label className="block text-sm font-medium text-gray-700 mb-2">
-                Skills
-              </label>
-              <input
-                type="text"
-                value={skills}
-                onChange={(e) => setSkills(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                placeholder="Enter skills (comma-separated)"
-              /> */}
               <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
               <CreatableSelect
                 isMulti
@@ -311,16 +301,6 @@ const Register = () => {
           {/* Achievements */}
           {role === "JobSeeker" && (
             <div className="mb-4 col-span-2">
-              {/* <label className="block text-sm font-medium text-gray-700 mb-2">
-                Achievements
-              </label>
-              <input
-                type="text"
-                value={achievements}
-                onChange={(e) => setAchievements(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                placeholder="Enter achievements (comma-separated)"
-              /> */}
               <label className="block text-sm font-medium text-gray-700 mb-2">Achievements</label>
               <CreatableSelect
                 isMulti

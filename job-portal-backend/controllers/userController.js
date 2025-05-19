@@ -90,13 +90,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 // Update User Basic Information
 export const update = catchAsyncErrors(async (req, res, next) => {
   const { firstName, middleName, lastName, phone, province, district, skills, personalSummary, location, achievements, gender, dateOfBirth, workExperiences } = req.body;
-  // const userId = req.user._id; // Assuming `req.user` is populated via authentication middleware
   const { userId } = req.params;
-
-  // // Validate required fields
-  // if (!firstName && !middleName && !lastName && !phone && !province && !district && !location) {
-  //   return next(new ErrorHandler("Please provide at least one field to update!", 400));
-  // }
 
   // Find the user to update
   const user = await User.findById(userId);
@@ -252,18 +246,14 @@ export const deleteAccount = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Delete the user account
-  // await user.remove();
   user.isDeleted = true;
   await user.save();
 
-  // Delete user's related data after account deletion
 
   // Remove job data posted by client
   if (user.role === "Client") {
     await Job.deleteMany({ postedBy: userId });
   }
-
-  // await Review.deleteMany({$or: [{ reviewerId: userId }, { revieweeId: userId }]})
 
 
   res.status(200).json({

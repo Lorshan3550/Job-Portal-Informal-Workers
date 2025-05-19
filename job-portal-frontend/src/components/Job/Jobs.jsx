@@ -1024,35 +1024,6 @@ const Jobs = () => {
               <h2 className="text-xl font-semibold mb-4">Search JobSeekers</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Skills input (multi-select or comma separated) */}
-                {/* <input
-                  type="text"
-                  placeholder="Enter or select skills (comma separated)"
-                  className="border rounded-lg px-4 py-2"
-                  value={jobSeekerSearch.skills.join(", ")}
-                  onChange={handleSkillsInput}
-                  list="skills-list"
-                />
-                <datalist id="skills-list">
-                  {jobSkills.map((skill, idx) => (
-                    <option key={idx} value={skill} />
-                  ))}
-                </datalist> */}
-                {/* <select
-                  multiple
-                  className="border rounded-lg px-4 py-2 h-32"
-                  value={jobSeekerSearch.skills}
-                  onChange={e => {
-                    const selected = Array.from(e.target.selectedOptions, option => option.value);
-                    setJobSeekerSearch(prev => ({ ...prev, skills: selected }));
-                  }}
-                >
-                  {jobSkills.map((skill, idx) => (
-                    <option key={idx} value={skill}>
-                      {skill}
-                    </option>
-                  ))}
-                </select> */}
-
                 <input
                   type="text"
                   placeholder="Type to filter skills"
@@ -1245,14 +1216,7 @@ const Jobs = () => {
                   setSearchQuery({ ...searchQuery, title: e.target.value })
                 }
               />
-              {/* <input
-                type="text"
-                placeholder="Category"
-                className="border rounded-lg px-4 py-2"
-                onChange={(e) =>
-                  setSearchQuery({ ...searchQuery, category: e.target.value })
-                }
-              /> */}
+
               {/* Category */}
               <select
                 className="border rounded-lg px-4 py-2"
@@ -1268,38 +1232,6 @@ const Jobs = () => {
                   </option>
                 ))}
               </select>
-
-              {/* Skills
-              <select
-                className="border rounded-lg px-4 py-2"
-                value={searchQuery.requiredSkills || ""}
-                onChange={(e) =>
-                  setSearchQuery({ ...searchQuery, requiredSkills: e.target.value })
-                }
-              >
-                <option value="">Select Skills</option>
-                {jobSkills.map((skill, index) => (
-                  <option key={index} value={skill}>
-                    {skill}
-                  </option>
-                ))}
-              </select> */}
-
-              {/* <select
-                multiple
-                className="border rounded-lg px-4 py-2 h-32"
-                value={searchQuery.requiredSkills ? searchQuery.requiredSkills.split(",") : []}
-                onChange={e => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value);
-                  setSearchQuery({ ...searchQuery, requiredSkills: selected.join(",") });
-                }}
-              >
-                {jobSkills.map((skill, index) => (
-                  <option key={index} value={skill}>
-                    {skill}
-                  </option>
-                ))}
-              </select> */}
 
               <input
                 type="text"
@@ -1323,10 +1255,6 @@ const Jobs = () => {
                   </option>
                 ))}
               </select>
-
-
-
-
 
               <select
                 className="border rounded-lg px-4 py-2"

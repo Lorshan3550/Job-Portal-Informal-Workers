@@ -222,7 +222,7 @@ const PostJob = () => {
   };
 
   return (
-    <div className="job_post page py-12 mt-16 bg-gradient-to-r from-green-50 via-green-100 to-green-50">
+    <div className="job_post page py-12 mt-24 bg-gradient-to-r from-green-50 via-green-100 to-green-50">
       <div className="container mx-auto px-4 md:px-8">
         <h3 className="text-3xl font-semibold text-center text-black mb-6">POST NEW JOB</h3>
         <form onSubmit={handleJobPost} className="bg-white p-8 rounded-lg shadow-xl max-w-3xl mx-auto">

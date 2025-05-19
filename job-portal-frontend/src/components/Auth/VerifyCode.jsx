@@ -9,30 +9,6 @@ const VerifyCode = () => {
 
   const navigate = useNavigate();
 
-  // const handleVerifyCode = (e) => {
-  //   e.preventDefault();
-
-  //   // Simulated correct verification code
-  //   const correctCode = "123456";
-
-  //   if (!code) {
-  //     setMessage("Please enter the verification code.");
-  //     return;
-  //   }
-
-  //   if (code !== correctCode) {
-  //     setMessage("Invalid verification code. Try again.");
-  //     return;
-  //   }
-
-  //   setMessage("Verification successful!");
-
-  //   // Redirect to Reset Password page after 2 seconds
-  //   setTimeout(() => {
-  //     navigate("/reset-password");
-  //   }, 2000);
-  // };
-
   const handleVerifyCode = async (e) => {
     e.preventDefault();
   

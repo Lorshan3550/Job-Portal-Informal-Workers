@@ -11,21 +11,18 @@ router.post("/login", loginAdmin);
 router.put("/update", isAuthenticated ,updateAdmin);
 router.put("/update-email/:userId", isAuthenticated, updateUserEmailByAdmin);
 router.put("/reset-password/:userId", isAuthenticated, resetUserPasswordByAdmin);
-
-router.delete("/hard-delete-user/:userId", isAuthenticated, hardDeleteUser);
 router.put("/update-approval/:id", isAuthenticated, updateAdminApprovalForJob);
-
+router.put("/flag/:reviewId", isAuthenticated, updateReviewFlag);
+router.put("/review/adminApproval/:reviewId", isAuthenticated, updateAdminApproval)
 
 router.get("/logout", isAuthenticated, logout);
 router.get("/dashboard-stats", isAuthenticated, getDashboardStats);
 
 router.delete("/delete-review/:reviewId", isAuthenticated, deleteReviewByAdmin);
+router.delete("/hard-delete-user/:userId", isAuthenticated, hardDeleteUser);
 
 
-// Update flagged status and reason of a review (Authenticated)
-router.put("/flag/:reviewId", isAuthenticated, updateReviewFlag);
 
-router.put("/review/adminApproval/:reviewId", isAuthenticated, updateAdminApproval)
-// router.get("/getuser", isAuthenticated, getUser);
+
 
 export default router;
